@@ -13,7 +13,7 @@ let config = {
       },
       rows: 20,
       cols: 100,
-      blockSize: 20,
+      blockSize: 50,
     },
     player: {
       x: 100,
