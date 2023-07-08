@@ -8,10 +8,10 @@ let config = {
   },
   grid : {
     translate: {
-      x: 00,
+      x:-400,
       y: 200,
     },
-    rows: 9,
+    rows: 20,
     cols: 100,
     blockSize: 20,
   },
@@ -20,7 +20,7 @@ let config = {
     y: 0,
     bodyOptions: { inertia: Infinity, restitution: 0.5, friction: 0}
   },
-  canvas: { width: 800, height: 400},
+  canvas: { width: 800, height: 700},
   backgroundColor: [50,150,300],
   wireFrame: false,
   images: {
