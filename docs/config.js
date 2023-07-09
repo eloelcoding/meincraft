@@ -1,8 +1,10 @@
 var blockTypes = {
-  "EARTH": 0,
+  "DIRT": 0,
   "GRASS": 1,
   "WOOD": 2,
-  "EARTH2": 4,
+  "LEAF": 3,
+  "STONE": 4,
+  "COAL": 5,
   "IRON": 6,
   "DIAMOND": 7,
   "AIR": 11,
@@ -26,11 +28,11 @@ let config = {
     grid : {
       translate: {
         x:-400,
-        y: 200,
+        y: 100,
       },
-      rows: 10,
+      rows: 30,
       cols: 100,
-      blockSize: 50,
+      blockSize: 20,
     },
     player: {
       x: 100,
@@ -49,13 +51,15 @@ let config = {
     },
     blockTypes,
     blockTypesMap,
-    hitSpeed: 20,
+    hitSpeed: 10,
     hitSpeedByBlockType: {
-      EARTH: 1,
-      GRASS: 1,
+      DIRT: 2,
+      GRASS: 2,
+      STONE: 1,
       WOOD: 0.7,
+      COAL: 0.7,
       IRON: 0.5,
-      DIAMOND: 0.2
+      DIAMOND: 0.2,
     }
   }
   

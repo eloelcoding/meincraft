@@ -154,20 +154,36 @@ class Grid {
       blockType = BLOCKTYPE.GRASS;
     }
     else if(row>h+3){
-      blockType = BLOCKTYPE.EARTH;
+      blockType = BLOCKTYPE.STONE;
         // place iron with prob
+      if (random() < 0.15) blockType = BLOCKTYPE.COAL;
       if (random() < 0.1) blockType = BLOCKTYPE.IRON;
       // place diamongs but only at a certain depth
-      if (row > 7 && random() < 0.05)
+      if (row > 12 && random() < 0.05)
         // if(random() < 0.005 * (10-row))
         blockType = BLOCKTYPE.DIAMOND;
     }
     else {
-      blockType = 0;
+      blockType = BLOCKTYPE.DIRT;
 
     }
 
     return blockType;
+  }
+
+  createCavern() {
+    for(var j = 0; j < this.cols; j++) {
+      var start = 15;
+      if(random()<0.4)
+        continue;
+      if(random()<0.2)
+        start -= 4;
+      if(random()<0.2)
+        start += 4;
+
+      for (var i = 0; i < random() * 5; i++)
+        this.grid[i+start][j].type = blockTypes.AIR;
+    }
   }
 
   constructor(img, x, y, rows, cols, size) {
@@ -192,6 +208,7 @@ class Grid {
       }
       grid.push(row);
     }
-    
+
+    this.createCavern();
   }
 }
