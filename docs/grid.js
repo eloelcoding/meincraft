@@ -100,6 +100,17 @@ class Block extends MatterObject {
     }
   }
   
+  drawDamage() {
+    if(this.health<100){
+      // this.health goes from 100 to 0 => level got from 7 to 10 
+      var level = map(this.health,100,0,7,10);
+      level = floor(level);
+      // image is too small otherwise
+      scale(30,30)
+      image(spriteCache[level],0,0)
+    }
+  }
+
   draw(wireFrame) {
     if(this.isTouchedByMouse()) {
       Block.cursor = HAND;
@@ -114,11 +125,7 @@ class Block extends MatterObject {
       translate(this.x-this.grid.size/2, this.y-this.grid.size/2);
       scale(this.grid.size/this.grid.blockSize)
       image(this.img,0,0);
-      if(this.health<100){
-        var level = 9 - floor(this.health / 25);
-        scale(30,30)
-        image(spriteCache[level],0,0)
-      }
+      this.drawDamage();
       pop();
     }
   }
