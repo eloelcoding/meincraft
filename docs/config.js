@@ -18,10 +18,10 @@ Object.keys(blockTypes).map(k => {
 let config = {
     showGUI: true,
     log: true,
-    gravity: 0.9,
+    gravity: 0.8,
     movement: {
       //in minecraft it takes .80 secs to fall 4 blocks
-      jumpAmount: 5,
+      jumpAmount: 4,
       speed: 5,
       shiftSpeedupFactor: 2,
     },
