@@ -199,12 +199,12 @@ class Grid {
     this.cols = cols;
 
     this.inventory = new Inventory();
-    // this.inventory.addItem(config.blockTypes.COAL)
-    // this.inventory.addItem(config.blockTypes.DIRT)
-    // this.inventory.addItem(config.blockTypes.DIRT)
-    // this.inventory.addItem(config.blockTypes.DIAMOND)
-    // this.inventory.addItem(config.blockTypes.DIAMOND)
-    // this.inventory.addItem(config.blockTypes.DIAMOND)
+    this.inventory.addItem(config.blockTypes.COAL)
+    this.inventory.addItem(config.blockTypes.IRON)
+    this.inventory.addItem(config.blockTypes.IRON)
+    this.inventory.addItem(config.blockTypes.DIAMOND)
+    this.inventory.addItem(config.blockTypes.DIAMOND)
+    this.inventory.addItem(config.blockTypes.DIAMOND)
     var grid = [];
     this.grid = grid;
 

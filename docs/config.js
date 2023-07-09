@@ -43,6 +43,7 @@ let config = {
     backgroundColor: [50,150,300],
     wireFrame: false,
     images: {
+      hotbar: "assets/images/hotbar.png",
       blocks: "assets/images/bitMap.png",
       sprites: "assets/images/sprites.png",
     },

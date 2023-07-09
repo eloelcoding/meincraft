@@ -9,6 +9,7 @@ function preload() {
   
   images = {}
   Object.keys(config.images).map(name => {
+    print("Loading image " + name);
     images[name] = loadImage(config.images[name]);
   })
   sounds = {};
