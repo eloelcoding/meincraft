@@ -2,8 +2,10 @@ let images;
 let grid;
 let wireFrames = config.wireFrame;
 let player;
+let spriteCache;
 
 function preload() {
+  
   images = {}
   Object.keys(config.images).map(name => {
     images[name] = loadImage(config.images[name]);
@@ -55,7 +57,16 @@ function keyPressed() {
   }
 }
 
+function createCache() {
+  var spriteIndex = [0,1,2,3,4,5,6,7,8,9];
+  spriteCache = {};
+  spriteIndex.map(index=>{ 
+      spriteCache[index] = images.sprites.get(index*10,0,10,10)    
+  })
+}
+
 function setup() {
+  createCache();
   rectMode(CENTER)
   setupWorld();
   t = 0; fr = 0;
@@ -96,7 +107,7 @@ function scrollRight(){
 function scrollLeft(){
   t+=slider.value();
   print("Scrolling")
-    MatterObject.translate(slider.value(),0)
+  MatterObject.translate(slider.value(),0)
 }
 
 function draw() {
