@@ -1,6 +1,7 @@
 let imageCache = {};
 
 class Block extends MatterObject {
+  static cursor;
   constructor(grid, row, col, type) {
     super();
     var img = grid.img;
@@ -43,14 +44,18 @@ class Block extends MatterObject {
     return this.alive && this.type != config.blockTypes.AIR;
   }
 
-  mouseDown() {
-    if(!this.body) return;
+  isTouchedByMouse() {
+    if(!this.body) return false;
     var size = this.grid.size;
     var translate = MatterObject._translate;
     var coordinates = {x:mouseX-translate.x,y:mouseY-translate.y};
     var isInside = Matter.Vertices.contains(this.body.vertices,coordinates);
+    print(isInside);
+    return isInside;
+  }
 
-    if(isInside) {
+  mouseDown() {
+    if(this.isTouchedByMouse()) {
       log("Click")
       this.alive = !this.alive;//false;  
       if(this.alive)
@@ -74,6 +79,9 @@ class Block extends MatterObject {
   }
   
   draw(wireFrame) {
+    if(this.isTouchedByMouse()) {
+      Block.cursor = HAND;
+    };
     if (this.isVisible()) {
       if(wireFrame) {
         if(!this.body) return
