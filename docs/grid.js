@@ -119,7 +119,13 @@ class Block extends MatterObject {
     if (this.isVisible()) {
       if(wireFrame) {
         if(!this.body) return
-        rect(this.x,this.y,this.grid.size,this.grid.size)
+        rect(this.x,this.y,this.grid.size,this.grid.size);
+        push();
+        textSize(8);
+        var label = `${this.row}/${this.col}`;
+        text(label,this.x-this.grid.blockSize/50,this.y);
+
+        pop();
         return;
       }
       push();
@@ -170,6 +176,15 @@ class Grid {
     }
 
     return blockType;
+  }
+
+  getCoordinates() {
+    var row = floor(( mouseX - this.x ) / config.grid.blockSize);
+    var col = floor(( mouseY - this.y ) / config.grid.blockSize);
+
+    return {
+      row, col
+    }
   }
 
   createCavern() {
