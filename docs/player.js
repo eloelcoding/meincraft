@@ -30,6 +30,11 @@ class Player extends MatterObject {
     var jumpAmount = config.movement.jumpAmount;
     var x = speed * (keyIsDown(RIGHT_ARROW) - keyIsDown(LEFT_ARROW));
     var y = jumpAmount * (keyIsDown(DOWN_ARROW) - keyIsDown(UP_ARROW));
+    var speedUp = keyIsDown(SHIFT);
+    if(speedUp) {
+      x *= config.movement.shiftSpeedupFactor;
+      y *= config.movement.shiftSpeedupFactor;
+    }
     this.setDirection(x)
     Matter.Body.translate(this.body, {x,y});
     // if(abs(this.absolutePosition().x-windowWidth) > 200)

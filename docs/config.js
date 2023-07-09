@@ -20,7 +20,8 @@ let config = {
     movement: {
       //in minecraft it takes .80 secs to fall 4 blocks
       jumpAmount: 5,
-      speed: 5
+      speed: 5,
+      shiftSpeedupFactor: 2,
     },
     grid : {
       translate: {
