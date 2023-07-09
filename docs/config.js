@@ -24,8 +24,11 @@ let config = {
     backgroundColor: [50,150,300],
     wireFrame: false,
     images: {
-      blocks: "assets/bitMap.png",
-      sprites: "assets/sprites.png",
+      blocks: "assets/images/bitMap.png",
+      sprites: "assets/images/sprites.png",
+    },
+    sounds: {
+      shovel: "assets/sounds/flatten3-shovel.mp3",
     },
     log: true,
     blockTypes: {

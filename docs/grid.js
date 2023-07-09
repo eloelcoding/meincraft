@@ -65,6 +65,7 @@ class Block extends MatterObject {
   mouseDown() {
     if(this.isTouchedByMouse()) {
       this.health -= 1;
+      sounds.shovel();
       if(this.health>0)
         return;
       log("Click")

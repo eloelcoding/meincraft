@@ -3,12 +3,18 @@ let grid;
 let wireFrames = config.wireFrame;
 let player;
 let spriteCache;
+let sounds;
 
 function preload() {
   
   images = {}
   Object.keys(config.images).map(name => {
     images[name] = loadImage(config.images[name]);
+  })
+  sounds = {};
+  Object.keys(config.sounds).map(name => {
+    var sound = loadSound(config.sounds[name]);
+    sounds[name] = _.throttle(() => sound.play(), 1000); 
   })
 }
 
