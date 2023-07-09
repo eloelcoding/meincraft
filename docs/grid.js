@@ -217,6 +217,6 @@ class Grid {
       grid.push(row);
     }
 
-    this.createCavern();
+    // this.createCavern();
   }
 }
