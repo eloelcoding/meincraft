@@ -1,5 +1,21 @@
+var blockTypes = {
+  "EARTH": 0,
+  "GRASS": 1,
+  "WOOD": 2,
+  "EARTH2": 4,
+  "IRON": 6,
+  "DIAMOND": 7,
+  "AIR": 11,
+};
+
+var blockTypesMap = {};
+Object.keys(blockTypes).map(k => {
+  blockTypesMap[blockTypes[k]] = k
+})
+
 let config = {
     showGUI: true,
+    log: true,
     gravity: 0.9,
     movement: {
       //in minecraft it takes .80 secs to fall 4 blocks
@@ -30,13 +46,15 @@ let config = {
     sounds: {
       shovel: "assets/sounds/flatten3-shovel.mp3",
     },
-    log: true,
-    blockTypes: {
-      "GRASS": 1,
-      "EARTH": 4,
-      "IRON": 6,
-      "DIAMOND": 7,
-      "AIR": 11,
+    blockTypes,
+    blockTypesMap,
+    hitSpeed: 20,
+    hitSpeedByBlockType: {
+      EARTH: 1,
+      GRASS: 1,
+      WOOD: 0.7,
+      IRON: 0.5,
+      DIAMOND: 0.2
     }
   }
   

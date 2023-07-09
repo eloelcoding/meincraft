@@ -23,7 +23,7 @@ function mouseReleased() {
 }
 
 function mouseDown() {
-  print("Mouse pressed");
+  logIt("Mouse pressed");
   MatterObject.mouseDown();
 }
   

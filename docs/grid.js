@@ -1,5 +1,4 @@
 let imageCache = {};
-// let spriteCache = {};
 
 class Block extends MatterObject {
   static cursor;
@@ -26,16 +25,14 @@ class Block extends MatterObject {
       airAbove = !blockAbove.isVisible()
     }    
     
-    this.alive = true;
-    
     if(this.isVisible()&&airAbove) 
       this.addToWorld();
   }
   
   addToWorld() {
-    log("Creating body at ", this.row, this.col);
+    logIt("Creating body at ", this.row, this.col);
     if(this.body || !this.isVisible()) {
-      log("... canceled - not visible or already has a body")
+      logIt("... canceled - not visible or already has a body")
       return;
     }
     var grid = this.grid;
@@ -45,49 +42,61 @@ class Block extends MatterObject {
   }
   
   isVisible() {
-    return this.alive && this.type != config.blockTypes.AIR;
+    return !this.isDestroyed() && this.type != config.blockTypes.AIR;
   }
 
   isTouchedByMouse() {
     if(!this.body) return false;
-    var size = this.grid.size;
     var translate = MatterObject._translate;
     var coordinates = {x:mouseX-translate.x,y:mouseY-translate.y};
     var isInside = Matter.Vertices.contains(this.body.vertices,coordinates);
-    // print(isInside);
     return isInside;
   }
 
   mouseReleased() {
-    this.health = 100;
+    // if it wasn't fully destroyed then restore it back to 100
+    if(!this.isDestroyed())
+      this.health = 100;
+  }
+
+  takeHit() {
+    var typeName = config.blockTypesMap[this.type];
+    var hit = config.hitSpeedByBlockType[typeName] * config.hitSpeed;
+    if(hit == 0) console.error("Could not find blocktype");
+    this.health -= hit;
+    sounds.shovel();
+  }
+
+  isDestroyed() {
+    return this.health<=0;   
+  }
+
+  neighbors() {
+    var blocks = [];
+    var neighbors = [[1,0],[0,-1],[0,1],[-1,0]];
+    logIt("Destroying block",this.row,this.col);
+    neighbors.map(neighbor => {
+      var row = this.row + neighbor[0];
+      var col = this.col + neighbor[1];
+      // corner cases: top rows/cols
+      if(row==0 || row == this.grid.grid.length) return;
+      // if(col==0 || col == this.grid.grid[0].length) return;
+      var neighborBrick = this.grid.grid[row][col];
+      blocks.push(neighborBrick);
+    });
+    return blocks;
   }
 
   mouseDown() {
     if(this.isTouchedByMouse()) {
-      this.health -= 1;
-      sounds.shovel();
-      if(this.health>0)
+      this.takeHit();
+      // take the hit and then return
+      if(!this.isDestroyed())
         return;
-      log("Click")
-      this.alive = !this.alive;//false;  
-      if(this.alive)
-        World.add(world,this.body);
-      else {
-        var neighbors = [[1,0],[0,-1],[0,1],[-1,0]];
-        log("Destroying block",this.row,this.col);
-        neighbors.map(neighbor => {
-          var row = this.row + neighbor[0];
-          var col = this.col + neighbor[1];
-          if(row==0 || row == this.grid.grid.length) return;
-          var neighborBrick = this.grid.grid[row][col];
-          
-          log("Adding neighbor",row,col);
-          neighborBrick.addToWorld();          
-        });
-        
-        World.remove(world,this.body);
-        delete(this.body);
-      }
+      // create a physical body for all neighbors
+      this.neighbors().map(brick => brick.addToWorld());
+      World.remove(world,this.body);
+      delete(this.body);
     }
   }
   

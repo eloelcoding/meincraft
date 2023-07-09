@@ -1,4 +1,4 @@
-function log(...text) {
+function logIt(...text) {
   if(config.log) {
     print(...text)
   }
