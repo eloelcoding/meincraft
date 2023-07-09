@@ -78,8 +78,8 @@ function createCache() {
 
 function setup() {
   createCache();
-  rectMode(CENTER)
-  // imageMode(CENTER)
+  rectMode(CENTER);
+  imageMode(CENTER);
   setupWorld();
   t = 0; fr = 0;
   setInterval(() => { fr = frameRate() }, 500);

@@ -50,7 +50,7 @@ class Player extends MatterObject {
       return;
     }
     
-    translate(pos.x-this.width/2*this.scale, pos.y-this.height/2*this.scale);
+    translate(pos.x,pos.y);
     scale(this.scale,this.scale)
     // rotate(this.body.angle)
     if (this.direction<0)

@@ -123,7 +123,7 @@ class Block extends MatterObject {
         return;
       }
       push();
-      translate(this.x-this.grid.size/2, this.y-this.grid.size/2);
+      translate(this.x,this.y);
       scale(this.grid.size/this.grid.blockSize)
       image(this.img,0,0);
       this.drawDamage();

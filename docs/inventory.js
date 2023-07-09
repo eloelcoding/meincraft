@@ -17,11 +17,11 @@ class Inventory{
     draw(){
         var slotSize=60
         push()
-            imageMode(CENTER);
             translate(500, 400);
-            rect(0,0,slotSize*10,slotSize);
+            rect(0,0,slotSize*10,slotSize,10);
             var items = Object.keys(this.items);
             var i = 0;
+            
             textSize(20);
             textStyle(BOLD);
             fill(255);
