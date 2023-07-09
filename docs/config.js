@@ -11,7 +11,7 @@ let config = {
         x:-400,
         y: 200,
       },
-      rows: 20,
+      rows: 10,
       cols: 100,
       blockSize: 50,
     },
@@ -20,7 +20,7 @@ let config = {
       y: 0,
       bodyOptions: { inertia: Infinity, restitution: 0.5, friction: 0}
     },
-    canvas: { width: 800, height: 700},
+    canvas: { width: 700, height: 600},
     backgroundColor: [50,150,300],
     wireFrame: false,
     images: {

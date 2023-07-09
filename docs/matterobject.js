@@ -23,6 +23,7 @@ class MatterObject {
     }
 
 	static draw(wireFrame) {
+    Block.cursor = CROSS;
 		MatterObject.objects.map(obj => {
           push();
           translate(MatterObject._translate.x, MatterObject._translate.y);

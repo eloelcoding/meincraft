@@ -20,7 +20,6 @@ function setupWorld() {
   world = engine.world;
   print(world.gravity.y);
   world.gravity.y = config.gravity;
-
   
   Matter.Runner.run(engine);  
 }
@@ -101,12 +100,12 @@ function scrollLeft(){
 }
 
 function draw() {
+    cursor(Block.cursor);
     background(...config.backgroundColor);
     MatterObject.draw(wireFrames);
     player.checkMovement()
     if(config.showGUI) {
       text(floor(fr), 150, 25);
-      text(world.bodies.length, 250, 25);
     }
     
 }
