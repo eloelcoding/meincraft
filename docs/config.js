@@ -27,11 +27,11 @@ let config = {
     },
     grid : {
       translate: {
-        x:-400,
+        x:0,
         y: 100,
       },
       rows: 30,
-      cols: 100,
+      cols: 50,
       blockSize: 20,
     },
     player: {

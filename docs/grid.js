@@ -97,6 +97,7 @@ class Block extends MatterObject {
       this.neighbors().map(brick => brick.addToWorld());
       World.remove(world,this.body);
       delete(this.body);
+      this.grid.inventory.addItem(this.type)
     }
   }
   
@@ -196,7 +197,14 @@ class Grid {
     this.img = img;
     this.rows = rows;
     this.cols = cols;
-    
+
+    this.inventory = new Inventory();
+    // this.inventory.addItem(config.blockTypes.COAL)
+    // this.inventory.addItem(config.blockTypes.DIRT)
+    // this.inventory.addItem(config.blockTypes.DIRT)
+    // this.inventory.addItem(config.blockTypes.DIAMOND)
+    // this.inventory.addItem(config.blockTypes.DIAMOND)
+    // this.inventory.addItem(config.blockTypes.DIAMOND)
     var grid = [];
     this.grid = grid;
 
