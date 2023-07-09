@@ -20,7 +20,7 @@ let config = {
       y: 0,
       bodyOptions: { inertia: Infinity, restitution: 0.5, friction: 0}
     },
-    canvas: { width: 700, height: 600},
+    canvas: { width: 1300, height: 600},
     backgroundColor: [50,150,300],
     wireFrame: false,
     images: {

@@ -1,4 +1,5 @@
 let imageCache = {};
+// let spriteCache = {};
 
 class Block extends MatterObject {
   static cursor;
@@ -8,6 +9,7 @@ class Block extends MatterObject {
     if(!imageCache[type]) {
       imageCache[type] = img.get(type*grid.blockSize,0,grid.blockSize,img.height)    
     }
+
     this.img = imageCache[type]; //img.get(type*grid.blockSize,0,grid.blockSize,img.height)    
     this.type = type;
     this.grid = grid;
@@ -17,6 +19,8 @@ class Block extends MatterObject {
     this.x = grid.x + col * grid.size 
     this.y = grid.y + row * grid.size
     var airAbove = true;
+    this.health = 100;
+
     if(row>0){
       var blockAbove = grid.grid[row-1][col];
       airAbove = !blockAbove.isVisible()
@@ -50,12 +54,15 @@ class Block extends MatterObject {
     var translate = MatterObject._translate;
     var coordinates = {x:mouseX-translate.x,y:mouseY-translate.y};
     var isInside = Matter.Vertices.contains(this.body.vertices,coordinates);
-    print(isInside);
+    // print(isInside);
     return isInside;
   }
 
   mouseDown() {
     if(this.isTouchedByMouse()) {
+      this.health -= 25;
+      if(this.health>0)
+        return;
       log("Click")
       this.alive = !this.alive;//false;  
       if(this.alive)
@@ -72,6 +79,7 @@ class Block extends MatterObject {
           log("Adding neighbor",row,col);
           neighborBrick.addToWorld();          
         });
+        
         World.remove(world,this.body);
         delete(this.body);
       }
@@ -92,6 +100,12 @@ class Block extends MatterObject {
       translate(this.x-this.grid.size/2, this.y-this.grid.size/2);
       scale(this.grid.size/this.grid.blockSize)
       image(this.img,0,0);
+      if(this.health<100){
+        var level = 10 - floor(this.health / 25);
+        print(level);
+        scale(30,30)
+        image(spriteCache[level],0,0)
+      }
       pop();
     }
   }
