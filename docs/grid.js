@@ -58,9 +58,13 @@ class Block extends MatterObject {
     return isInside;
   }
 
+  mouseReleased() {
+    this.health = 100;
+  }
+
   mouseDown() {
     if(this.isTouchedByMouse()) {
-      this.health -= 25;
+      this.health -= 1;
       if(this.health>0)
         return;
       log("Click")
@@ -101,8 +105,7 @@ class Block extends MatterObject {
       scale(this.grid.size/this.grid.blockSize)
       image(this.img,0,0);
       if(this.health<100){
-        var level = 10 - floor(this.health / 25);
-        print(level);
+        var level = 9 - floor(this.health / 25);
         scale(30,30)
         image(spriteCache[level],0,0)
       }

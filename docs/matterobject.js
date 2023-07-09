@@ -32,7 +32,12 @@ class MatterObject {
         });
 	}
 
-    static mouseDown() {
-      MatterObject.objects.map(obj => obj.mouseDown && obj.mouseDown());
-    }
+  static mouseDown() {
+    MatterObject.objects.map(obj => obj.mouseDown && obj.mouseDown());
+  }
+
+  static mouseReleased() {
+    MatterObject.objects.map(obj => obj.mouseReleased && obj.mouseReleased());
+  }
+
 }

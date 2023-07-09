@@ -12,8 +12,13 @@ function preload() {
   })
 }
 
-function mouseClicked() {
-    MatterObject.mouseDown();
+function mouseReleased() {
+  MatterObject.mouseReleased();
+}
+
+function mouseDown() {
+  print("Mouse pressed");
+  MatterObject.mouseDown();
 }
   
 
@@ -89,6 +94,7 @@ function setup() {
 }
 
 function centerPlayerToMiddle() {
+  return;
   var playerPosition = player.absolutePosition().x;
   var middle = windowWidth/2;
   var centeringSpeed = 0.005;
@@ -118,5 +124,7 @@ function draw() {
     if(config.showGUI) {
       text(floor(fr), 150, 25);
     }
+    if(mouseIsPressed)
+      mouseDown();
     
 }
