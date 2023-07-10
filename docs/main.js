@@ -39,6 +39,9 @@ function setupWorld() {
 }
 
 function createGUI() {
+  //deactive inspect right click menu thing
+  canvas = document.querySelector('canvas');
+  canvas.addEventListener('contextmenu', event => event.preventDefault());
   if(!config.showGUI) return;
   button = createButton("Left");
   button.position(20, 40);
@@ -61,6 +64,13 @@ function createGUI() {
 
 function onChange() {
   wireFrames = !wireFrames;
+}
+
+function mousePressed() {
+  if (mouseButton === RIGHT) {
+    grid.addItem(grid.inventory.selected)
+    console.log("Right-click detected");
+  }
 }
 
 function keyPressed() {

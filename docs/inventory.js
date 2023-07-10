@@ -1,7 +1,7 @@
 class Inventory{
     constructor(){
         this.items = {};
-        
+        this.selected = 0
     }
     addItem(type){
         
@@ -12,6 +12,15 @@ class Inventory{
         }
         print (this.items)  
 
+    }
+
+    removeItem(blockType) {
+        if(!this.items[blockType])
+            return false;
+        this.items[blockType]--;
+        if(this.items[blockType] == 0)
+            delete(this.items[blockType]);
+        return true;
     }
     
     draw(){

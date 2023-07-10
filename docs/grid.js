@@ -179,12 +179,18 @@ class Grid {
   }
 
   getCoordinates() {
-    var row = floor(( mouseX - this.x ) / config.grid.blockSize);
-    var col = floor(( mouseY - this.y ) / config.grid.blockSize);
+    var col = round(( mouseX - this.x ) / config.grid.blockSize);
+    var row = round(( mouseY - this.y ) / config.grid.blockSize);
 
     return {
       row, col
     }
+  }
+
+  addItem(blockType){
+    if(!this.inventory.removeItem(blockType)) return;    
+    var coordinates = this.getCoordinates();
+    this.grid[coordinates.row] [coordinates.col] = new Block(this, coordinates.row, coordinates.col, blockType)
   }
 
   createCavern() {
