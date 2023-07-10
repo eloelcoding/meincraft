@@ -31,7 +31,7 @@ let config = {
         y: 100,
       },
       rows: 30,
-      cols: 50,
+      cols: 40,
       blockSize: 20,
     },
     player: {
@@ -40,7 +40,7 @@ let config = {
       bodyOptions: { inertia: Infinity, restitution: 0.5, friction: 0}
     },
     canvas: { width: 1300, height: 600},
-    backgroundColor: [50,150,300],
+    backgroundColor: [100,200,400],
     wireFrame: false,
     images: {
       hotbar: "assets/images/hotbar.png",
