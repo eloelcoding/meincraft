@@ -88,6 +88,7 @@ class Block extends MatterObject {
   }
 
   mouseDown() {
+    if (mouseButton != LEFT) return;
     if(this.isTouchedByMouse()) {
       this.takeHit();
       // take the hit and then return
