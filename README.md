@@ -2,6 +2,4 @@
 
 ## experimenting with p5js and matterjs :-)
 
-This is fun
-
-Testing notifications
+See demo on https://eloelcoding.github.io/meincraft/
