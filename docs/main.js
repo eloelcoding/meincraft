@@ -159,7 +159,8 @@ function draw() {
       translate(coordinates.x, coordinates.y);
     else
       translate(mouseX,mouseY);
-    scale(1/15,1/15)
+    var scaling = 1/15 * config.grid.blockSize / 20;
+    scale(scaling,scaling)
     image(imageCache[grid.inventory.selected],0,0);
     pop();
   } 
