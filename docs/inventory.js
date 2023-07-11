@@ -2,16 +2,24 @@ class Inventory{
     constructor(){
         this.items = {};
         this.selected = 0
+        this.selectedIdx = 0;
     }
     addItem(type){
-        
         if (!this.items[type]){
          this.items[type]=1 
         } else{
         this.items[type]++
         }
         print (this.items)  
+    }
 
+    setActive(index) {
+        var items = Object.keys(this.items);
+        var blockType = items[index];
+        if(blockType == undefined) return;
+        this.selectedIdx = index;
+        this.selected = blockType;
+        Block.cursor = imageCache[blockType];
     }
 
     removeItem(blockType) {
@@ -26,9 +34,10 @@ class Inventory{
     draw(){
         var slotSize=60
         var itemSize=slotSize*0.75
-        var black=80
+        var black=80;
+        var length = slotSize * 10;
         push()
-            translate(500, 400);
+            translate(config.canvas.width/2, config.canvas.height * 0.9);
             push()
             fill(black,black,black,180)
             rect(0,0,slotSize*10,slotSize,10);
@@ -37,16 +46,26 @@ class Inventory{
             var items = Object.keys(this.items);
             var i = 0;
             
+            fill(255);
             textSize(20);
             textStyle(BOLD);
-            fill(255);
             translate(-slotSize/10,0)
             items.map(itemType=>{
                 var img=imageCache[itemType];
                 image(img,slotSize*(i-4.4),0,itemSize,itemSize);
+                textSize(14);
+                textStyle(NORMAL);
+                text(i+1,slotSize*(i-4.8),-slotSize*0.21);
+                textSize(20);
+                textStyle(BOLD);
                 text(this.items[itemType],slotSize*(i-4.3),slotSize/3);
                 i++
             })
+            stroke(255);
+            strokeWeight(5);
+            noFill();
+            rect(slotSize*(this.selectedIdx-4.4),0,itemSize*1.2,itemSize*1.2);
+
         pop()
     }
 }

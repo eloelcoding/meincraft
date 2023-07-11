@@ -1,15 +1,10 @@
-let imageCache = {};
-
 class Block extends MatterObject {
   static cursor;
   constructor(grid, row, col, type) {
     super();
     var img = grid.img;
-    if(!imageCache[type]) {
-      imageCache[type] = img.get(type*grid.blockSize,0,grid.blockSize,img.height)    
-    }
 
-    this.img = imageCache[type]; //img.get(type*grid.blockSize,0,grid.blockSize,img.height)    
+    this.img = imageCache[type]; 
     this.type = type;
     this.grid = grid;
     this.type = type;
@@ -30,9 +25,9 @@ class Block extends MatterObject {
   }
   
   addToWorld() {
-    logIt("Creating body at ", this.row, this.col);
+    // logIt("Creating body at ", this.row, this.col);
     if(this.body || !this.isVisible()) {
-      logIt("... canceled - not visible or already has a body")
+      // logIt("... canceled - not visible or already has a body")
       return;
     }
     var grid = this.grid;
@@ -115,7 +110,7 @@ class Block extends MatterObject {
 
   draw(wireFrame) {
     if(this.isTouchedByMouse()) {
-      Block.cursor = HAND;
+      // Block.cursor = HAND;
     };
     if (this.isVisible()) {
       if(wireFrame) {
@@ -221,12 +216,11 @@ class Grid {
     this.cols = cols;
 
     this.inventory = new Inventory();
-    this.inventory.addItem(config.blockTypes.COAL)
-    this.inventory.addItem(config.blockTypes.IRON)
-    this.inventory.addItem(config.blockTypes.IRON)
-    this.inventory.addItem(config.blockTypes.DIAMOND)
-    this.inventory.addItem(config.blockTypes.DIAMOND)
-    this.inventory.addItem(config.blockTypes.DIAMOND)
+    for(var i=0;i<50;i++) {
+      var randomBlockType = floor(random() * (Object.keys(config.blockTypes).length-1)); 
+      print(randomBlockType);
+      this.inventory.addItem(randomBlockType);
+    }
     var grid = [];
     this.grid = grid;
 

@@ -2,7 +2,7 @@ let images;
 let grid;
 let wireFrames = config.wireFrame;
 let player;
-let spriteCache;
+let spriteCache, imageCache;
 let sounds;
 
 function preload() {
@@ -77,6 +77,9 @@ function keyPressed() {
   if(key == " ") {
     wireFrames = !wireFrames;
   }
+  if (key >= '1' && key <= '9') {
+    grid.inventory.setActive(float(key)-1);
+  }
 }
 
 function createCache() {
@@ -85,8 +88,15 @@ function createCache() {
   spriteIndex.map(index=>{ 
       spriteCache[index] = images.sprites.get(index*10,0,10,10)    
   })
-}
 
+  imageCache = {};
+  var mapBlocks = 10;
+  var blockSize = images.blocks.width / mapBlocks;
+
+  Object.keys(config.blockTypesMap).map(type => {
+    imageCache[type] = images.blocks.get(type*blockSize,0,blockSize,images.blocks.height)    
+  })
+}
 function setup() {
   createCache();
   rectMode(CENTER);
@@ -97,8 +107,6 @@ function setup() {
   createCanvas(config.canvas.width, config.canvas.height);
   createGUI();
   
-  var mapBlocks = 20;
-  var blockSize = images.blocks.width / mapBlocks;
   grid = new Grid(images.blocks,
                  config.grid.translate.x,
                  config.grid.translate.y,
@@ -108,7 +116,7 @@ function setup() {
                 );
 
   player = new Player(images.sprites,config.player.x,config.player.y)  
-  setInterval(centerPlayerToMiddle,5)
+  setInterval(centerPlayerToMiddle,5);
 }
 
 function centerPlayerToMiddle() {
@@ -135,15 +143,22 @@ function scrollLeft(){
 }
 
 function draw() {
-    cursor(Block.cursor);
-    background(...config.backgroundColor);
-    MatterObject.draw(wireFrames);
-    player.checkMovement()
-    if(config.showGUI) {
-      text(floor(fr), 150, 25);
-    }
-    if(mouseIsPressed)
-      mouseDown();
-    grid.inventory.draw()
+  background(...config.backgroundColor);
+  if(config.showGUI) {
+    text(floor(fr), 150, 25);
+  }
+
+  push()
+  translate(mouseX,mouseY);
+  scale(1/15,1/15)
+  image(imageCache[grid.inventory.selected],0,0);
+  pop();
+//  cursor(Block.cursor);
+  MatterObject.draw(wireFrames);
+  player.checkMovement()
+  if(mouseIsPressed)
+    mouseDown();
+  grid.inventory.draw()
+  grid.getCoordinates();
     
 }
