@@ -175,8 +175,8 @@ class Grid {
   }
 
   getCoordinates() {
-    var col = round(( mouseX - this.x ) / config.grid.blockSize);
-    var row = round(( mouseY - this.y ) / config.grid.blockSize);
+    var col = round(( mouseX - this.x - MatterObject._translate.x ) / config.grid.blockSize);
+    var row = round(( mouseY - this.y - MatterObject._translate.y ) / config.grid.blockSize);
 
     return {
       row, col
