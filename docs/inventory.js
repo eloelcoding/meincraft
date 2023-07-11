@@ -58,7 +58,11 @@ class Inventory{
                 text(i+1,slotSize*(i-4.8),-slotSize*0.21);
                 textSize(20);
                 textStyle(BOLD);
-                text(this.items[itemType],slotSize*(i-4.3),slotSize/3);
+                var itemCount = this.items[itemType];
+                var offset = 0;
+                if(itemCount>=10)
+                    offset = -0.1
+                text(this.items[itemType],slotSize*(i-4.3+offset),slotSize/3);
                 i++
             })
             stroke(255);

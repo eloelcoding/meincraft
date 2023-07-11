@@ -33,6 +33,7 @@ let config = {
       rows: 30,
       cols: 40,
       blockSize: 20,
+      snap: true,
     },
     player: {
       x: 100,

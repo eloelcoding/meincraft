@@ -148,17 +148,25 @@ function draw() {
     text(floor(fr), 150, 25);
   }
 
-  push()
-  translate(mouseX,mouseY);
-  scale(1/15,1/15)
-  image(imageCache[grid.inventory.selected],0,0);
-  pop();
-//  cursor(Block.cursor);
   MatterObject.draw(wireFrames);
+
+  // cursor
+  var coordinates = grid.snappedXYcoordinates();
+  var snapGrid = config.grid.snap;
+  if(coordinates != undefined) {
+    push()
+    if(snapGrid)
+      translate(coordinates.x, coordinates.y);
+    else
+      translate(mouseX,mouseY);
+    scale(1/15,1/15)
+    image(imageCache[grid.inventory.selected],0,0);
+    pop();
+  } 
+//  cursor(Block.cursor);
   player.checkMovement()
   if(mouseIsPressed)
     mouseDown();
   grid.inventory.draw()
-  grid.getCoordinates();
     
 }

@@ -178,14 +178,29 @@ class Grid {
     var col = round(( mouseX - this.x - MatterObject._translate.x ) / config.grid.blockSize);
     var row = round(( mouseY - this.y - MatterObject._translate.y ) / config.grid.blockSize);
 
+    // if we are outside the grid, return nothing
+    if(col < 0 || col >= this.cols || row < 0 || row >= this.rows)
+      return;
     return {
       row, col
     }
   }
 
+  snappedXYcoordinates() {
+    var coordinates = this.getCoordinates();
+    if(!coordinates) return;
+    var x = this.x + MatterObject._translate.x + config.grid.blockSize * coordinates.col;
+    var y = this.y + MatterObject._translate.y + config.grid.blockSize * coordinates.row;
+
+    return {x,y}
+  }
+
   addItem(blockType){
     if(!this.inventory.removeItem(blockType)) return;    
     var coordinates = this.getCoordinates();
+    // that means we're out of the grid
+    if(!coordinates)
+      return; 
     this.grid[coordinates.row] [coordinates.col] = new Block(this, coordinates.row, coordinates.col, blockType)
   }
 
@@ -216,7 +231,7 @@ class Grid {
     this.cols = cols;
 
     this.inventory = new Inventory();
-    for(var i=0;i<50;i++) {
+    for(var i=0;i<100;i++) {
       var randomBlockType = floor(random() * (Object.keys(config.blockTypes).length-1)); 
       print(randomBlockType);
       this.inventory.addItem(randomBlockType);
