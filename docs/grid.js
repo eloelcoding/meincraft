@@ -186,6 +186,14 @@ class Grid {
     }
   }
 
+  mouseIsOnBlock() {
+    var coordinates = this.getCoordinates();
+    if(!coordinates)
+      return false;
+    var block = this.grid[coordinates.row][coordinates.col];
+    return block.isVisible();
+  }
+
   snappedXYcoordinates() {
     var coordinates = this.getCoordinates();
     if(!coordinates) return;

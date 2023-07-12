@@ -151,19 +151,21 @@ function draw() {
   MatterObject.draw(wireFrames);
 
   // cursor
-  var coordinates = grid.snappedXYcoordinates();
-  var snapGrid = config.grid.snap;
-  if(coordinates != undefined) {
-    push()
-    if(snapGrid)
-      translate(coordinates.x, coordinates.y);
-    else
-      translate(mouseX,mouseY);
-    var scaling = 1/15 * config.grid.blockSize / 20;
-    scale(scaling,scaling)
-    image(imageCache[grid.inventory.selected],0,0);
-    pop();
-  } 
+  if(!grid.mouseIsOnBlock()) {
+    var coordinates = grid.snappedXYcoordinates();
+    var snapGrid = config.grid.snap;
+    if(coordinates != undefined) {
+      push()
+      if(snapGrid)
+        translate(coordinates.x, coordinates.y);
+      else
+        translate(mouseX,mouseY);
+      var scaling = 1/15 * config.grid.blockSize / 20;
+      scale(scaling,scaling)
+      image(imageCache[grid.inventory.selected],0,0);
+      pop();
+    } 
+  }
 //  cursor(Block.cursor);
   player.checkMovement()
   if(mouseIsPressed)
