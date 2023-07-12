@@ -68,6 +68,7 @@ function onChange() {
 
 function mousePressed() {
   if (mouseButton === RIGHT) {
+    if(grid.mouseIsOnBlock()) return
     grid.addItem(grid.inventory.selected)
     console.log("Right-click detected");
   }
@@ -104,6 +105,7 @@ function setup() {
   setupWorld();
   t = 0; fr = 0;
   setInterval(() => { fr = frameRate() }, 500);
+  config.canvas = {width: windowWidth, height: windowHeight}
   createCanvas(config.canvas.width, config.canvas.height);
   createGUI();
   

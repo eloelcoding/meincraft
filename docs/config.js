@@ -40,8 +40,7 @@ let config = {
       y: 0,
       bodyOptions: { inertia: Infinity, restitution: 0.5, friction: 0}
     },
-    canvas: { width: 1300, height: 600},
-    backgroundColor: [100,200,400],
+  backgroundColor: [100,200,400],
     wireFrame: false,
     images: {
       hotbar: "assets/images/hotbar.png",
@@ -64,4 +63,5 @@ let config = {
       DIAMOND: 0.2,
     }
   }
-  
+
+print(windowWidth)
