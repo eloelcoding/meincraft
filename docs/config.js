@@ -63,5 +63,3 @@ let config = {
       DIAMOND: 0.2,
     }
   }
-
-print(windowWidth)
