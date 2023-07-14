@@ -19,6 +19,8 @@ function preload() {
   })
 }
 
+
+
 function mouseReleased() {
   MatterObject.mouseReleased();
 }
@@ -52,7 +54,12 @@ function createGUI() {
   button2.position(150, 40);
   button2.size(100, 25);
   button2.mousePressed(scrollRight);
-  
+
+  button3 = createButton("Right");
+  button3.position(550, 40);
+  button3.size(100, 25);
+  button3.mousePressed(() => new MapSaver().loadMap());
+
   slider = createSlider(50, 500, 50, 50);
   slider.position(300, 35);
   slider.style('width', '200px');  
