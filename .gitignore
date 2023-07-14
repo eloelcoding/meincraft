@@ -1,3 +1,4 @@
 *.exe
 saved_maps/**
 node_modules/**
+*.pyc
