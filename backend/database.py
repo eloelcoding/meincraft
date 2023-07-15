@@ -1,20 +1,24 @@
 from sqlalchemy import create_engine, text
+from sqlalchemy.engine.base import Engine
 import pandas as pd
+from typing import Optional
+
 
 class Database:
     def __init__(self, url):
         self.url = url
-        self.engine = None
+        self.engine: Optional[Engine] = None
 
-    def get_connection(self):
+    def get_connection(self) -> Engine:
         if not self.engine:
             self.engine = create_engine(self.url)
         return self.engine
 
     def __del__(self):
-        self.engine.dispose()
+        if self.engine is not None:
+            self.engine.dispose()
         
-    def query(self, query, params = None):
+    def query(self, query: str, params = None) -> pd.DataFrame:
         if params is None:
             params = {} 
         print(f"Running query [{query}] with params = {params}")
@@ -31,30 +35,31 @@ class Database:
         conn.execute(text(query), params)
         conn.commit()
 
-    def create_table(self, drop = False):
+    def create_table(self, drop = False) -> None:
         print("Creating database if necessary")
         if drop:
             self.execute_query("DROP TABLE IF EXISTS maps")
         create_query = "CREATE TABLE IF NOT EXISTS maps (encoded_map TEXT, name TEXT PRIMARY KEY)"
         self.execute_query(create_query)
 
-    def save_map(self, map_data):
+    def save_map(self, map_data) -> None:
         save_query = "INSERT OR REPLACE INTO maps (encoded_map, name) VALUES (:encodedMap,:name)"
         self.execute_query(save_query, map_data)
 
-    def load_map(self, name):
+    def load_map(self, name) -> str | None:
         results = self.query(f"SELECT encoded_map FROM maps WHERE name=:name", {'name': name})
         if len(results):
             return results.loc[0,'encoded_map']
         else:
             raise Exception("Could not load map")
 
-    def get_map_names(self):
+    def get_map_names(self) -> list[str]:
         results = self.query("SELECT name FROM maps")
         return list(results['name'])
 
 if __name__ == "__main__":
-    db = Database('sqlite:///backend/data/maps2.db')
+    url = 'sqlite:///backend/data/maps2.db'
+    db = Database(url)
     print(db.create_table())
     print(db.get_map_names())
     print(db.load_map('map1'))
