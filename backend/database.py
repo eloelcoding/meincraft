@@ -17,14 +17,15 @@ class Database:
     def create_table(self):
         conn = self.get_connection()
         c = conn.cursor()
-        c.execute("CREATE TABLE IF NOT EXISTS maps (encoded_map TEXT, name TEXT)")
+        print("Creating database if necessary")
+        c.execute("CREATE TABLE IF NOT EXISTS maps (encoded_map TEXT, name TEXT PRIMARY KEY)")
         conn.commit()
         c.close()
 
     def save_map(self, map_data):
         conn = self.get_connection()
         c = conn.cursor()
-        c.execute("INSERT INTO maps (encoded_map, name) VALUES (?, ?)", (map_data.encodedMap, map_data.name))
+        c.execute("INSERT OR REPLACE INTO maps (encoded_map, name) VALUES (?, ?)", (map_data.encodedMap, map_data.name))
         conn.commit()
         c.close()
 
