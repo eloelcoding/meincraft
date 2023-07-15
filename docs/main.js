@@ -59,41 +59,37 @@ function saveMap(chooseName) {
 }
 
 function createGUI() {
+
+  var buttons = [
+    { label: "←",   position: [20,40], size: [30,25], action: scrollLeft },
+    { label: "→",  position: [55,40], size: [30,25], action: scrollRight },
+    { label: "💾",  position: [500,10], size: [30,25], action: () => saveMap(false) },
+    { label: "💾 As...",  position: [530,10], size: [70,25], action: () => saveMap(true) },
+  ];
+
+  buttons.map(data => {
+    var button = createButton(data.label);
+    button.position(...data.position);
+    button.size(...data.size);
+    button.mousePressed(data.action);
+  })
+
   //deactive inspect right click menu thing
   canvas = document.querySelector('canvas');
   canvas.addEventListener('contextmenu', event => event.preventDefault());
   if(!config.showGUI) return;
-  button = createButton("Left");
-  button.position(20, 40);
-  button.size(100, 25);
-  button.mousePressed(scrollLeft);
-  
-  button2 = createButton("Right");
-  button2.position(150, 40);
-  button2.size(100, 25);
-  button2.mousePressed(scrollRight);
 
   dropdown = createSelect();
   refreshMapDropDown(dropdown)
   dropdown.changed(() => {
+    // todo -> load a map
     debugger;
   });
-
-  dropdown.position(550, 40);
+  dropdown.position(400, 10);
   dropdown.size(100, 25);
 
-  button3 = createButton("Save");
-  button3.position(670, 40);
-  button3.size(100, 25);
-  button3.mousePressed(() => saveMap(false));
-
-  button4 = createButton("Save As...");
-  button4.position(770, 40);
-  button4.size(100, 25);
-  button4.mousePressed(() => saveMap(true));
-
   slider = createSlider(50, 500, 50, 50);
-  slider.position(300, 35);
+  slider.position(170, 10);
   slider.style('width', '200px');  
   
   checkbox = createCheckbox('Wireframes', wireFrames);
