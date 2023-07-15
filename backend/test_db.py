@@ -33,7 +33,7 @@ class TestDatabase(TestCase):
         map = self.db.load_map(added_map['name'])
         self.assertEqual(map, added_map['encodedMap'])
     
-    def testCountMaps(self):
+    def test_count_maps(self):
         maps = self.db.get_map_names()
         self.assertEqual(0,len(maps))
         added_map = self.random_map()
@@ -41,6 +41,14 @@ class TestDatabase(TestCase):
         maps = self.db.get_map_names()
         self.assertEqual(1,len(maps))
 
+    def test_delete_maps(self):
+        added_map = self.random_map()
+        self.db.save_map(added_map)
+        self.db.delete_map(added_map['name'])
+        maps = self.db.get_map_names()
+        self.assertEqual(0,len(maps))
+        with self.assertRaises(LookupError):
+            self.db.load_map(added_map['name'])
 
     def tearDown(self):
         del(self.db)

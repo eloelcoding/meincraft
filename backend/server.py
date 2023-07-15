@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import uvicorn
@@ -15,7 +15,6 @@ class Map(BaseModel):
     encodedMap: str
     name: str
 
-
 # Save a map to the database
 @app.post("/api/map")
 def save_map(map_data: Map):
@@ -25,17 +24,26 @@ def save_map(map_data: Map):
 
 # Load a map from the database by name
 @app.get("/api/map/{name}")
-def load_map(name: str):
+def read_map(name: str):
     db = Database(URL)
     encoded_map = db.load_map(name)
     if encoded_map:
         return {"encodedMap": encoded_map}
     else:
-        return {"message": "Map not found"}
+        raise HTTPException(status_code=404, detail="Map not found")
+
+
+@app.delete("/api/map/{name}")
+def delete_map(name: str):
+    deleted = db.delete_map(name)
+    if deleted:
+        return {"message": "Map deleted successfully"}
+    else:
+        raise HTTPException(status_code=404, detail="Map not found")
 
 # List all map names
 @app.get("/api/maps")
-def list_map_names():
+def list_maps():
     db = Database(URL)
     map_names = db.get_map_names()
     return {"mapNames": map_names}

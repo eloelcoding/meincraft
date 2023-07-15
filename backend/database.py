@@ -43,15 +43,20 @@ class Database:
         self.execute_query(create_query)
 
     def save_map(self, map_data) -> None:
-        save_query = "INSERT OR REPLACE INTO maps (encoded_map, name) VALUES (:encodedMap,:name)"
-        self.execute_query(save_query, map_data)
+        query = "INSERT OR REPLACE INTO maps (encoded_map, name) VALUES (:encodedMap,:name)"
+        self.execute_query(query, map_data)
+
+    def delete_map(self, name: str) -> None:
+        query = "DELETE FROM maps WHERE name = :name"
+        self.execute_query(query, {'name': name})
+        return True
 
     def load_map(self, name) -> str | None:
         results = self.query(f"SELECT encoded_map FROM maps WHERE name=:name", {'name': name})
         if len(results):
             return results.loc[0,'encoded_map']
         else:
-            raise Exception("Could not load map")
+            raise LookupError("Could not load map")
 
     def get_map_names(self) -> list[str]:
         results = self.query("SELECT name FROM maps")
