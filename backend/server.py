@@ -6,7 +6,8 @@ from database import Database
 
 app = FastAPI()
 
-db = Database()
+URL = 'sqlite:///backend/data/maps.db'
+db = Database(URL)
 db.create_table()
 
 # Define a model for the map data
@@ -18,14 +19,14 @@ class Map(BaseModel):
 # Save a map to the database
 @app.post("/api/map")
 def save_map(map_data: Map):
-    db = Database()
+    db = Database(URL)
     db.save_map(map_data)
     return {"message": "Map saved successfully"}
 
 # Load a map from the database by name
 @app.get("/api/map/{name}")
 def load_map(name: str):
-    db = Database()
+    db = Database(URL)
     encoded_map = db.load_map(name)
     if encoded_map:
         return {"encodedMap": encoded_map}
@@ -35,7 +36,7 @@ def load_map(name: str):
 # List all map names
 @app.get("/api/maps")
 def list_map_names():
-    db = Database()
+    db = Database(URL)
     map_names = db.get_map_names()
     return {"mapNames": map_names}
 

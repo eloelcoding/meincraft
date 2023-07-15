@@ -1,48 +1,60 @@
-import sqlite3
+from sqlalchemy import create_engine, text
+import pandas as pd
 
 class Database:
-    def __init__(self):
-        self.conn = None
+    def __init__(self, url):
+        self.url = url
+        self.engine = None
 
     def get_connection(self):
-        if not self.conn:
-            self.conn = sqlite3.connect("backend/data/maps.db")
-        return self.conn
+        if not self.engine:
+            self.engine = create_engine(self.url)
+        return self.engine
 
-    def close_connection(self):
-        if self.conn:
-            self.conn.close()
-            self.conn = None
-
-    def create_table(self):
-        conn = self.get_connection()
-        c = conn.cursor()
-        print("Creating database if necessary")
-        c.execute("CREATE TABLE IF NOT EXISTS maps (encoded_map TEXT, name TEXT PRIMARY KEY)")
+    def __del__(self):
+        self.engine.dispose()
+        
+    def query(self, query, params = None):
+        if params is None:
+            params = {} 
+        print(f"Running query [{query}] with params = {params}")
+        engine = self.get_connection()
+        print(query, params)
+        return pd.read_sql(query, engine, params=params)
+    
+    def execute_query(self, query, params = None):
+        if params is None:
+            params = {} 
+        print(f"Executing query [{query}] with params = {params}")
+        engine = self.get_connection()
+        conn = engine.connect()
+        conn.execute(text(query), params)
         conn.commit()
-        c.close()
+
+    def create_table(self, drop = False):
+        print("Creating database if necessary")
+        if drop:
+            self.execute_query("DROP TABLE IF EXISTS maps")
+        create_query = "CREATE TABLE IF NOT EXISTS maps (encoded_map TEXT, name TEXT PRIMARY KEY)"
+        self.execute_query(create_query)
 
     def save_map(self, map_data):
-        conn = self.get_connection()
-        c = conn.cursor()
-        c.execute("INSERT OR REPLACE INTO maps (encoded_map, name) VALUES (?, ?)", (map_data.encodedMap, map_data.name))
-        conn.commit()
-        c.close()
+        save_query = "INSERT OR REPLACE INTO maps (encoded_map, name) VALUES (:encodedMap,:name)"
+        self.execute_query(save_query, map_data)
 
     def load_map(self, name):
-        conn = self.get_connection()
-        c = conn.cursor()
-        c.execute("SELECT encoded_map FROM maps WHERE name=?", (name,))
-        result = c.fetchone()
-        if result:
-            return result[0]
+        results = self.query(f"SELECT encoded_map FROM maps WHERE name=:name", {'name': name})
+        if len(results):
+            return results.loc[0,'encoded_map']
         else:
-            return None
+            raise Exception("Could not load map")
 
     def get_map_names(self):
-        conn = self.get_connection()
-        c = conn.cursor()
-        c.execute("SELECT name FROM maps")
-        results = c.fetchall()
-        map_names = [result[0] for result in results]
-        return map_names
+        results = self.query("SELECT name FROM maps")
+        return list(results['name'])
+
+if __name__ == "__main__":
+    db = Database('sqlite:///backend/data/maps2.db')
+    print(db.create_table())
+    print(db.get_map_names())
+    print(db.load_map('map1'))
