@@ -2,9 +2,6 @@ class Block extends MatterObject {
   static cursor;
   constructor(grid, row, col, type) {
     super();
-    var img = grid.img;
-
-    this.img = imageCache[type]; 
     this.type = type;
     this.grid = grid;
     this.type = type;
@@ -23,11 +20,19 @@ class Block extends MatterObject {
     if(this.isVisible()&&airAbove) 
       this.addToWorld();
   }
+
+
+  serialize() {
+    return JSON.stringify(this,(key,value) => {
+      if(key == "grid" || key == "body") return;
+      return value;
+    });
+  }
   
   addToWorld() {
-    // logIt("Creating body at ", this.row, this.col);
+    logIt("Creating body at ", this.row, this.col);
     if(this.body || !this.isVisible()) {
-      // logIt("... canceled - not visible or already has a body")
+      logIt("... canceled - not visible or already has a body")
       return;
     }
     var grid = this.grid;
@@ -108,6 +113,10 @@ class Block extends MatterObject {
     }
   }
 
+  image() {
+    return imageCache[this.type];
+  }
+
   draw(wireFrame) {
     if(this.isTouchedByMouse()) {
       // Block.cursor = HAND;
@@ -127,7 +136,7 @@ class Block extends MatterObject {
       push();
       translate(this.x,this.y);
       scale(this.grid.size/this.grid.blockSize)
-      image(this.img,0,0);
+      image(this.image(),0,0);
       this.drawDamage();
       pop();
     }
@@ -172,6 +181,29 @@ class Grid {
     }
 
     return blockType;
+  }
+
+  serialize() {
+    return JSON.stringify(this,(key,value) => {
+      if(key == "grid") {
+        var grid = value;
+        var serialized = [];
+        for(var i=0;i<this.rows;i++) {
+          var row = [];
+          for(var j=0;j<this.cols;j++) {
+            try {
+              row.push(grid[i][j].serialize())
+            } catch {
+              debugger;
+              grid[i][j].serialize();
+            }
+          }
+          serialized.push(row);
+        }
+        return JSON.stringify(serialized);
+      }
+      return value;
+    })
   }
 
   getCoordinates() {
@@ -227,14 +259,14 @@ class Grid {
     }
   }
 
-  constructor(img, x, y, rows, cols, size) {
+  constructor(x, y, rows, cols, size) {
     this.x = x;
     this.y = y;
     var mapBlocks = 10;
+    var img = images.blocks;
     var blockSize = img.width / mapBlocks; // 287 or 10
     this.size = size;
     this.blockSize = blockSize;
-    this.img = img;
     this.rows = rows;
     this.cols = cols;
 

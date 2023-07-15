@@ -40,6 +40,24 @@ function setupWorld() {
   Matter.Runner.run(engine);  
 }
 
+function refreshMapDropDown(dropdown) {
+  MapSaver.listMaps().then(data => {
+    // need to find out how to wipe out all options
+    // dropdown.remove()
+    data.map(m => dropdown.option(m))
+  })
+}
+
+function saveMap(chooseName) {
+  var name;
+  if(chooseName)
+    name = prompt("Name your map");
+  else
+    name = dropdown.value();
+  MapSaver.saveMap(name,grid.serialize());
+  refreshMapDropDown(dropdown);
+}
+
 function createGUI() {
   //deactive inspect right click menu thing
   canvas = document.querySelector('canvas');
@@ -55,10 +73,24 @@ function createGUI() {
   button2.size(100, 25);
   button2.mousePressed(scrollRight);
 
-  button3 = createButton("Right");
-  button3.position(550, 40);
+  dropdown = createSelect();
+  refreshMapDropDown(dropdown)
+  dropdown.changed(() => {
+    debugger;
+  });
+
+  dropdown.position(550, 40);
+  dropdown.size(100, 25);
+
+  button3 = createButton("Save");
+  button3.position(670, 40);
   button3.size(100, 25);
-  button3.mousePressed(() => new MapSaver().loadMap());
+  button3.mousePressed(() => saveMap(false));
+
+  button4 = createButton("Save As...");
+  button4.position(770, 40);
+  button4.size(100, 25);
+  button4.mousePressed(() => saveMap(true));
 
   slider = createSlider(50, 500, 50, 50);
   slider.position(300, 35);
@@ -116,7 +148,7 @@ function setup() {
   createCanvas(config.canvas.width, config.canvas.height);
   createGUI();
   
-  grid = new Grid(images.blocks,
+  grid = new Grid(
                  config.grid.translate.x,
                  config.grid.translate.y,
                  config.grid.rows, 
