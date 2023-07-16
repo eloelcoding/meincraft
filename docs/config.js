@@ -36,7 +36,7 @@ let config = {
       snap: true,
     },
     player: {
-      x: 100,
+      x: 300,
       y: 0,
       bodyOptions: { inertia: Infinity, restitution: 0.5, friction: 0}
     },

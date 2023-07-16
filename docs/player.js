@@ -38,7 +38,7 @@ class Player extends MatterObject {
     this.setDirection(x)
     Matter.Body.translate(this.body, {x,y});
     // if(abs(this.absolutePosition().x-windowWidth) > 200)
-    MatterObject.translate(-x/3,0);
+    //MatterObject.translate(-x/3,0);
   }
     
   draw(wireFrame) {

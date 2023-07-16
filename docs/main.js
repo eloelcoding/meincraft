@@ -1,7 +1,7 @@
 let images;
 let grid;
 let wireFrames = config.wireFrame;
-let player;
+let player, player2, activePlayer;
 let spriteCache, imageCache;
 let sounds;
 
@@ -87,6 +87,26 @@ function createGUI() {
   dropdown.position(400, 10);
   dropdown.size(100, 25);
 
+  playerChoice = createSelect();
+  playerChoice.position(620,10);
+  playerChoice.size(100,25);
+  Object.keys(players).map(p => playerChoice.option(p));
+  activePlayerBeacon = undefined;
+  setActivePlayer = p => {
+    if(activePlayerBeacon != undefined)
+      clearInterval(activePlayerBeacon);
+
+    activePlayer = p;
+    console.log("Setting player to ", p)
+    SocketServer.send('playerchange', {'player': activePlayer});
+    // activePlayerBeacon = setInterval(() => {
+    //   var p = players[activePlayer];
+    //   var position = {player: activePlayer, position: { x: p.body.position.x, y: p.body.position.y }}  
+    //   SocketServer.send('message', position)
+    // }, 1000)
+  }
+  playerChoice.changed(() => setActivePlayer(playerChoice.value()));
+
   slider = createSlider(50, 500, 50, 50);
   slider.position(170, 10);
   slider.style('width', '200px');  
@@ -139,10 +159,9 @@ function setup() {
   setupWorld();
   t = 0; fr = 0;
   setInterval(() => { fr = frameRate() }, 500);
-  config.canvas = {width: windowWidth, height: windowHeight}
+  var pct = 0.9;
+  config.canvas = {width: windowWidth * pct, height: windowHeight * pct}
   createCanvas(config.canvas.width, config.canvas.height);
-  createGUI();
-  
   grid = new Grid(
                  config.grid.translate.x,
                  config.grid.translate.y,
@@ -152,6 +171,10 @@ function setup() {
                 );
 
   player = new Player(images.sprites,config.player.x,config.player.y)  
+  player2 = new Player(images.sprites,config.player.x + 100,config.player.y);
+  players = {'Player 1': player, 'Player 2': player2};
+  createGUI();
+  setActivePlayer('Player 1');
   setInterval(centerPlayerToMiddle,5);
 }
 
@@ -201,7 +224,7 @@ function draw() {
     } 
   }
 //  cursor(Block.cursor);
-  player.checkMovement()
+  players[activePlayer].checkMovement()
   if(mouseIsPressed)
     mouseDown();
   grid.inventory.draw()
