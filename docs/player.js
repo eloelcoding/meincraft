@@ -6,13 +6,11 @@ class Player extends MatterObject {
     this.imgLeft = img.get(0,0,this.width,this.height)
     this.imgRight = img.get(10,0,this.width,this.height)
     this.direction = 1
-    this.x = x;
-    this.y = y;
     this.scale = config.grid.blockSize/this.width;
     // inertia
     var options =  config.player.bodyOptions;
     this.body = Bodies.rectangle(
-      this.x, this.y, 
+      x, y, 
       this.width*this.scale,this.height*this.scale,
       options
     );
@@ -23,6 +21,20 @@ class Player extends MatterObject {
   setDirection(direction){
     if (direction==0) return
     this.direction = direction
+  }
+
+  getCoordinates() {
+    var grid = Game.Instance().grid 
+    let pos = this.body.position;
+    var col = round(( pos.x - grid.x - MatterObject._translate.x ) / config.grid.blockSize);
+    var row = round(( pos.y - grid.y - MatterObject._translate.y ) / config.grid.blockSize);
+
+    // if we are outside the grid, return nothing
+    if(col < 0 || col >= grid.cols || row < 0 || row >= grid.rows)
+      return;
+    return {
+      row, col
+    }
   }
   
   checkMovement(){
@@ -44,6 +56,10 @@ class Player extends MatterObject {
   draw(wireFrame) {
     let pos = this.body.position;
     if(wireFrame) {
+      var cords = this.getCoordinates()
+    if (cords){
+      print(cords);
+    }
       translate(pos.x,pos.y)
       rotate(this.body.angle)
       rect(0,0,this.width*this.scale,this.height*this.scale)
@@ -51,8 +67,10 @@ class Player extends MatterObject {
     }
     
     translate(pos.x,pos.y);
+    
     scale(this.scale,this.scale)
     // rotate(this.body.angle)
+
     if (this.direction<0)
       image(this.imgLeft,0,0)
     if (this.direction>0)

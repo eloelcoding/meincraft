@@ -49,6 +49,19 @@ class Block extends MatterObject {
     return isInside;
   }
 
+  isNearPlayer(){
+    var radius = 3
+    var player = Game.Instance().player;
+    var playerCords = player.getCoordinates()
+    var blockCords = Game.Instance().grid.getCoordinates();
+    if (!blockCords) return false;
+    var distanceRow = blockCords.row-playerCords.row
+    var distanceCol = blockCords.col-playerCords.col
+    if(abs(distanceRow) + abs(distanceCol) <= radius) return true;
+print(distanceRow,distanceCol)
+
+  }
+
   mouseReleased() {
     // if it wasn't fully destroyed then restore it back to 100
     if(!this.isDestroyed())
@@ -83,8 +96,9 @@ class Block extends MatterObject {
   }
 
   mouseDown() {
+    
     if (mouseButton != LEFT) return;
-    if(this.isTouchedByMouse()) {
+    if(this.isTouchedByMouse()&&this.isNearPlayer()) {
       this.takeHit();
       // take the hit and then return
       if(!this.isDestroyed())

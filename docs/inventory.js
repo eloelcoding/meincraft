@@ -11,7 +11,7 @@ class Inventory{
         } else{
         this.items[type]++
         }
-        print (this.items)  
+        logIt (this.items)  
     }
 
     setActive(index) {
