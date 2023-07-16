@@ -3,6 +3,7 @@ from sqlalchemy.engine.base import Engine
 import pandas as pd
 from typing import Optional
 
+VERBOSE = False
 
 class Database:
     def __init__(self, url):
@@ -21,22 +22,25 @@ class Database:
     def query(self, query: str, params = None) -> pd.DataFrame:
         if params is None:
             params = {} 
-        print(f"Running query [{query}] with params = {params}")
+        if VERBOSE:
+            print(f"Running query [{query}] with params = {params}")
+            print(query, params)
         engine = self.get_connection()
-        print(query, params)
         return pd.read_sql(query, engine, params=params)
     
     def execute_query(self, query, params = None):
         if params is None:
             params = {} 
-        print(f"Executing query [{query}] with params = {params}")
+        if VERBOSE:
+            print(f"Executing query [{query}] with params = {params}")
         engine = self.get_connection()
         conn = engine.connect()
         conn.execute(text(query), params)
         conn.commit()
 
     def create_table(self, drop = False) -> None:
-        print("Creating database if necessary")
+        if VERBOSE:
+            print("Creating database if necessary")
         if drop:
             self.execute_query("DROP TABLE IF EXISTS maps")
         create_query = "CREATE TABLE IF NOT EXISTS maps (encoded_map TEXT, name TEXT PRIMARY KEY)"

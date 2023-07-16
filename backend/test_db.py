@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock
 from sqlalchemy import create_engine
 from pandas import DataFrame
 
-from database import Database
+from backend.database import Database
 
 
 class TestDatabase(TestCase):
