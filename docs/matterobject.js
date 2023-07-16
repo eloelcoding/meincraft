@@ -10,17 +10,23 @@ class MatterObject {
 		MatterObject.objects.push(this);
 	};	
 
-    absolutePosition() {
-      return { 
-        x: player.body.position.x + MatterObject._translate.x,
-        y: player.body.position.y + MatterObject._translate.y,
-      } 
-    }
+  cleanup() {
+    // console.log("Cleaning up");
+    var idx = MatterObject.objects.indexOf(this);
+    MatterObject.objects.splice(idx,1);
+  }
 
-    static translate(x,y) {
-      MatterObject._translate.x += x;
-      MatterObject._translate.y += y;
-    }
+  absolutePosition() {
+    return { 
+      x: player.body.position.x + MatterObject._translate.x,
+      y: player.body.position.y + MatterObject._translate.y,
+    } 
+  }
+
+  static translate(x,y) {
+    MatterObject._translate.x += x;
+    MatterObject._translate.y += y;
+  }
 
 	static draw(wireFrame) {
     // Block.cursor = CROSS;

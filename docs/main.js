@@ -81,9 +81,10 @@ function createGUI() {
 
   dropdown = createSelect();
   refreshMapDropDown(dropdown)
-  dropdown.changed(() => {
-    // todo -> load a map
-    debugger;
+  dropdown.changed(async () => {
+    var map = await MapSaver.loadMap(dropdown.value());
+    console.log(map.encodedMap)
+    await grid.applyMap(map.encodedMap);
   });
   dropdown.position(400, 10);
   dropdown.size(100, 25);
@@ -133,7 +134,10 @@ function createCache() {
     imageCache[type] = images.blocks.get(type*blockSize,0,blockSize,images.blocks.height)    
   })
 }
-function setup() {
+
+
+
+async function setup() {
   createCache();
   rectMode(CENTER);
   imageMode(CENTER);
@@ -152,7 +156,13 @@ function setup() {
                  config.grid.blockSize
                 );
 
-  player = new Player(images.sprites,config.player.x,config.player.y)  
+  player = new Player(images.sprites,config.player.x,config.player.y);
+  
+  if(true) {
+    var map = await MapSaver.loadMap('surprise');
+    await grid.applyMap(map.encodedMap);
+  }
+
   setInterval(centerPlayerToMiddle,5);
 }
 
@@ -209,4 +219,5 @@ function draw() {
     mouseDown();
   grid.inventory.draw()
     
+  text(dropdown.value(),500,500)
 }

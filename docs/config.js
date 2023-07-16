@@ -17,7 +17,7 @@ Object.keys(blockTypes).map(k => {
 
 let config = {
     showGUI: true,
-    log: true,
+    log: false,
     gravity: 0.8,
     movement: {
       //in minecraft it takes .80 secs to fall 4 blocks
@@ -27,7 +27,7 @@ let config = {
     },
     grid : {
       translate: {
-        x:0,
+        x:100,
         y: 100,
       },
       rows: 30,
@@ -52,7 +52,7 @@ let config = {
     },
     blockTypes,
     blockTypesMap,
-    hitSpeed: 10,
+    hitSpeed: 100,
     hitSpeedByBlockType: {
       DIRT: 2,
       GRASS: 2,

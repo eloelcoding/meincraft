@@ -21,12 +21,8 @@ class Block extends MatterObject {
       this.addToWorld();
   }
 
-
   serialize() {
-    return JSON.stringify(this,(key,value) => {
-      if(key == "grid" || key == "body") return;
-      return value;
-    });
+    return {row: this.row, col: this.col, type: this.type};
   }
   
   addToWorld() {
@@ -64,6 +60,8 @@ class Block extends MatterObject {
     var hit = config.hitSpeedByBlockType[typeName] * config.hitSpeed;
     if(hit == 0) console.error("Could not find blocktype");
     this.health -= hit;
+    if(this.isDestroyed())
+      this.type = config.blockTypes.AIR;
     sounds.shovel();
   }
 
@@ -72,19 +70,18 @@ class Block extends MatterObject {
   }
 
   neighbors() {
-    var blocks = [];
     var neighbors = [[1,0],[0,-1],[0,1],[-1,0]];
     logIt("Destroying block",this.row,this.col);
-    neighbors.map(neighbor => {
+    return neighbors.map(neighbor => {
       var row = this.row + neighbor[0];
       var col = this.col + neighbor[1];
       // corner cases: top rows/cols
-      if(row==0 || row == this.grid.grid.length) return;
-      // if(col==0 || col == this.grid.grid[0].length) return;
-      var neighborBrick = this.grid.grid[row][col];
-      blocks.push(neighborBrick);
-    });
-    return blocks;
+      if(row<0 || row == this.grid.rows) return;
+      if(col<0 || col == this.grid.cols) return;
+      return this.grid.grid[row][col];
+    })
+      // filter out empty blocks (i.e. out of grid)
+      .filter(b => b);
   }
 
   mouseDown() {
@@ -146,6 +143,36 @@ class Block extends MatterObject {
 
 //cols=collumns | size is the size of a single square
 class Grid {
+  constructor(x, y, rows, cols, size) {
+    this.x = x;
+    this.y = y;
+    var mapBlocks = 10;
+    var img = images.blocks;
+    var blockSize = img.width / mapBlocks; // 287 or 10
+    this.size = size;
+    this.blockSize = blockSize;
+    this.rows = rows;
+    this.cols = cols;
+
+    this.inventory = new Inventory();
+    for(var i=0;i<100;i++) {
+      var randomBlockType = floor(random() * (Object.keys(config.blockTypes).length-1)); 
+      print(randomBlockType);
+      this.inventory.addItem(randomBlockType);
+    }
+    var grid = [];
+    this.grid = grid;
+
+    for (var i = 0; i < rows; i++) {
+      var row = [];
+      for (var j = 0; j < cols; j++) {
+        var blockType = this.blockType(i, j);
+        row.push(new Block(this, i, j, blockType));
+      }
+      grid.push(row);
+    }
+  }
+
   blockType(row, col) {
     col*=0.15
     var waveOne=Math.sin(col/2)
@@ -191,19 +218,39 @@ class Grid {
         for(var i=0;i<this.rows;i++) {
           var row = [];
           for(var j=0;j<this.cols;j++) {
-            try {
               row.push(grid[i][j].serialize())
-            } catch {
-              debugger;
-              grid[i][j].serialize();
-            }
           }
           serialized.push(row);
         }
-        return JSON.stringify(serialized);
+        return serialized;
       }
       return value;
     })
+  }
+
+  printOut() {
+    this.grid.map(row => console.log(row.map(c => (c.type=="11") ? " " : c.type).join("")))
+  }
+
+  applyMap(encodedMap) {
+    var newGrid = JSON.parse(encodedMap);
+    var grid = [];
+
+    this.grid.map(row => row.map(b => b.cleanup()));
+    console.log("Cleaned up");
+    this.grid = [];
+    for(var i = 0; i < newGrid.rows; i++) {
+      var row = []
+      for(var j = 0; j < newGrid.cols; j++) {
+        var block = new Block(this, i, j, newGrid.grid[i][j].type);
+        row.push(block);
+      }
+      this.grid.push(row);
+    }
+
+    this.rows = newGrid.rows;
+    this.cols = newGrid.cols;
+    this.inventory = new Inventory(newGrid.inventory.items);
   }
 
   getCoordinates() {
@@ -257,37 +304,5 @@ class Grid {
       for (var i = 0; i < random() * 5; i++)
         this.grid[i+start][j].type = blockTypes.AIR;
     }
-  }
-
-  constructor(x, y, rows, cols, size) {
-    this.x = x;
-    this.y = y;
-    var mapBlocks = 10;
-    var img = images.blocks;
-    var blockSize = img.width / mapBlocks; // 287 or 10
-    this.size = size;
-    this.blockSize = blockSize;
-    this.rows = rows;
-    this.cols = cols;
-
-    this.inventory = new Inventory();
-    for(var i=0;i<100;i++) {
-      var randomBlockType = floor(random() * (Object.keys(config.blockTypes).length-1)); 
-      print(randomBlockType);
-      this.inventory.addItem(randomBlockType);
-    }
-    var grid = [];
-    this.grid = grid;
-
-    for (var i = 0; i < rows; i++) {
-      var row = [];
-      for (var j = 0; j < cols; j++) {
-        var blockType = this.blockType(i, j);
-        row.push(new Block(this, i, j, blockType));
-      }
-      grid.push(row);
-    }
-
-    // this.createCavern();
   }
 }

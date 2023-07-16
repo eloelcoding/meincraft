@@ -14,8 +14,8 @@ async function fetchApi(url, method="GET", data) {
 }
 
 class MapSaver {
-  static async loadMap() {
-    let mapName = prompt("Enter map name:");
+  static async loadMap(mapName) {
+    mapName = mapName || prompt("Enter map name:");
     if (mapName) {
       try {
         const data = await fetchApi(`/api/map/${mapName}`);

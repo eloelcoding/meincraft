@@ -48,7 +48,7 @@ class Database:
 
     def save_map(self, map_data) -> None:
         query = "INSERT OR REPLACE INTO maps (encoded_map, name) VALUES (:encodedMap,:name)"
-        self.execute_query(query, map_data)
+        self.execute_query(query, map_data.__dict__)
 
     def delete_map(self, name: str) -> None:
         query = "DELETE FROM maps WHERE name = :name"
