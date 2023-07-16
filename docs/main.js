@@ -1,7 +1,5 @@
 let images;
-let grid;
 let wireFrames = config.wireFrame;
-let player;
 let spriteCache, imageCache;
 let sounds;
 
@@ -54,9 +52,21 @@ function saveMap(chooseName) {
     name = prompt("Name your map");
   else
     name = dropdown.value();
-  MapSaver.saveMap(name,grid.serialize());
+  MapSaver.saveMap(name,Game.Instance().grid.serialize());
   refreshMapDropDown(dropdown);
 }
+
+function deleteMap(chooseName) {
+  var name;
+  if(!chooseName)
+    name = prompt("Name your map");
+  else
+    name = dropdown.value();
+  MapSaver.deleteMap(name);
+  refreshMapDropDown(dropdown);
+}
+
+
 
 function createGUI() {
 
@@ -84,7 +94,7 @@ function createGUI() {
   dropdown.changed(async () => {
     var map = await MapSaver.loadMap(dropdown.value());
     console.log(map.encodedMap)
-    await grid.applyMap(map.encodedMap);
+    await Game.Instance().grid.applyMap(map.encodedMap);
   });
   dropdown.position(400, 10);
   dropdown.size(100, 25);
@@ -104,8 +114,9 @@ function onChange() {
 
 function mousePressed() {
   if (mouseButton === RIGHT) {
-    if(grid.mouseIsOnBlock()) return
-    grid.addItem(grid.inventory.selected)
+    var game = Game.Instance();
+    if(game.grid.mouseIsOnBlock()) return
+    game.grid.addItem(game.inventory.selectedIdx)
     console.log("Right-click detected");
   }
 }
@@ -115,7 +126,7 @@ function keyPressed() {
     wireFrames = !wireFrames;
   }
   if (key >= '1' && key <= '9') {
-    grid.inventory.setActive(float(key)-1);
+    Game.Instance().inventory.setActive(float(key)-1);
   }
 }
 
@@ -148,7 +159,7 @@ async function setup() {
   createCanvas(config.canvas.width, config.canvas.height);
   createGUI();
   
-  grid = new Grid(
+  var grid = new Grid(
                  config.grid.translate.x,
                  config.grid.translate.y,
                  config.grid.rows, 
@@ -156,12 +167,10 @@ async function setup() {
                  config.grid.blockSize
                 );
 
-  player = new Player(images.sprites,config.player.x,config.player.y);
-  
-  if(true) {
-    var map = await MapSaver.loadMap('surprise');
-    await grid.applyMap(map.encodedMap);
-  }
+  var player = new Player(images.sprites,config.player.x,config.player.y);
+  new Game(grid, player);
+  var map = await MapSaver.loadMap('startworld');
+  await grid.applyMap(map.encodedMap);
 
   setInterval(centerPlayerToMiddle,5);
 }
@@ -198,6 +207,7 @@ function draw() {
   MatterObject.draw(wireFrames);
 
   // cursor
+  var grid = Game.Instance().grid;
   if(!grid.mouseIsOnBlock()) {
     var coordinates = grid.snappedXYcoordinates();
     var snapGrid = config.grid.snap;
@@ -209,15 +219,12 @@ function draw() {
         translate(mouseX,mouseY);
       var scaling = 1/15 * config.grid.blockSize / 20;
       scale(scaling,scaling)
-      image(imageCache[grid.inventory.selected],0,0);
+      image(imageCache[Game.Instance().inventory.selected],0,0);
       pop();
     } 
   }
-//  cursor(Block.cursor);
-  player.checkMovement()
+  Game.Instance().player.checkMovement()
   if(mouseIsPressed)
     mouseDown();
-  grid.inventory.draw()
-    
-  text(dropdown.value(),500,500)
+  Game.draw()
 }

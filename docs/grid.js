@@ -60,8 +60,6 @@ class Block extends MatterObject {
     var hit = config.hitSpeedByBlockType[typeName] * config.hitSpeed;
     if(hit == 0) console.error("Could not find blocktype");
     this.health -= hit;
-    if(this.isDestroyed())
-      this.type = config.blockTypes.AIR;
     sounds.shovel();
   }
 
@@ -92,10 +90,11 @@ class Block extends MatterObject {
       if(!this.isDestroyed())
         return;
       // create a physical body for all neighbors
+      Game.Instance().inventory.addItem(this.type)
+      this.type = config.blockTypes.AIR;
       this.neighbors().map(brick => brick.addToWorld());
       World.remove(world,this.body);
       delete(this.body);
-      this.grid.inventory.addItem(this.type)
     }
   }
   
@@ -154,12 +153,6 @@ class Grid {
     this.rows = rows;
     this.cols = cols;
 
-    this.inventory = new Inventory();
-    for(var i=0;i<100;i++) {
-      var randomBlockType = floor(random() * (Object.keys(config.blockTypes).length-1)); 
-      print(randomBlockType);
-      this.inventory.addItem(randomBlockType);
-    }
     var grid = [];
     this.grid = grid;
 
@@ -250,7 +243,6 @@ class Grid {
 
     this.rows = newGrid.rows;
     this.cols = newGrid.cols;
-    this.inventory = new Inventory(newGrid.inventory.items);
   }
 
   getCoordinates() {
@@ -283,7 +275,7 @@ class Grid {
   }
 
   addItem(blockType){
-    if(!this.inventory.removeItem(blockType)) return;    
+    if(!Game.Instance().inventory.removeItem(blockType)) return;    
     var coordinates = this.getCoordinates();
     // that means we're out of the grid
     if(!coordinates)

@@ -1,5 +1,5 @@
 async function fetchApi(url, method="GET", data) {
-  var options = {}
+  var options = { method }
   if (method == "POST")
     options = {
       method: 'POST',
@@ -37,5 +37,10 @@ class MapSaver {
     const data = {name,encodedMap};
     const result = await fetchApi('/api/map', "POST", data)
     console.log(result);
+  }
+
+  static async deleteMap(mapName) {
+    const results = await fetchApi(`/api/map/${mapName}`,"DELETE");
+    console.log(results);
   }
 }
