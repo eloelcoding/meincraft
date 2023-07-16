@@ -1,6 +1,7 @@
 class Inventory{
-    constructor(){
-        this.items = {};
+    constructor(items){
+        items = items || {};
+        this.items = items;
         this.selected = 0
         this.selectedIdx = 0;
     }

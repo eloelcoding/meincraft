@@ -1,7 +1,5 @@
 let images;
-let grid;
 let wireFrames = config.wireFrame;
-let player;
 let spriteCache, imageCache;
 let sounds;
 
@@ -18,6 +16,8 @@ function preload() {
     sounds[name] = _.throttle(() => sound.play(), 1000); 
   })
 }
+
+
 
 function mouseReleased() {
   MatterObject.mouseReleased();
@@ -38,23 +38,69 @@ function setupWorld() {
   Matter.Runner.run(engine);  
 }
 
+function refreshMapDropDown(dropdown) {
+  MapSaver.listMaps().then(data => {
+    // need to find out how to wipe out all options
+    // dropdown.remove()
+    data.map(m => dropdown.option(m))
+  })
+}
+
+function saveMap(chooseName) {
+  var name;
+  if(chooseName)
+    name = prompt("Name your map");
+  else
+    name = dropdown.value();
+  MapSaver.saveMap(name,Game.Instance().grid.serialize());
+  refreshMapDropDown(dropdown);
+}
+
+function deleteMap(chooseName) {
+  var name;
+  if(!chooseName)
+    name = prompt("Name your map");
+  else
+    name = dropdown.value();
+  MapSaver.deleteMap(name);
+  refreshMapDropDown(dropdown);
+}
+
+
+
 function createGUI() {
+
+  var buttons = [
+    { label: "←",   position: [20,40], size: [30,25], action: scrollLeft },
+    { label: "→",  position: [55,40], size: [30,25], action: scrollRight },
+    { label: "💾",  position: [500,10], size: [30,25], action: () => saveMap(false) },
+    { label: "💾 As...",  position: [530,10], size: [70,25], action: () => saveMap(true) },
+  ];
+
+  buttons.map(data => {
+    var button = createButton(data.label);
+    button.position(...data.position);
+    button.size(...data.size);
+    button.mousePressed(data.action);
+  })
+
   //deactive inspect right click menu thing
   canvas = document.querySelector('canvas');
   canvas.addEventListener('contextmenu', event => event.preventDefault());
   if(!config.showGUI) return;
-  button = createButton("Left");
-  button.position(20, 40);
-  button.size(100, 25);
-  button.mousePressed(scrollLeft);
-  
-  button2 = createButton("Right");
-  button2.position(150, 40);
-  button2.size(100, 25);
-  button2.mousePressed(scrollRight);
-  
+
+  dropdown = createSelect();
+  refreshMapDropDown(dropdown)
+  dropdown.changed(async () => {
+    var map = await MapSaver.loadMap(dropdown.value());
+    console.log(map.encodedMap)
+    await Game.Instance().grid.applyMap(map.encodedMap);
+  });
+  dropdown.position(400, 10);
+  dropdown.size(100, 25);
+
   slider = createSlider(50, 500, 50, 50);
-  slider.position(300, 35);
+  slider.position(170, 10);
   slider.style('width', '200px');  
   
   checkbox = createCheckbox('Wireframes', wireFrames);
@@ -68,8 +114,9 @@ function onChange() {
 
 function mousePressed() {
   if (mouseButton === RIGHT) {
-    if(grid.mouseIsOnBlock()) return
-    grid.addItem(grid.inventory.selected)
+    var game = Game.Instance();
+    if(game.grid.mouseIsOnBlock()) return
+    game.grid.addItem(game.inventory.selectedIdx)
     console.log("Right-click detected");
   }
 }
@@ -79,7 +126,7 @@ function keyPressed() {
     wireFrames = !wireFrames;
   }
   if (key >= '1' && key <= '9') {
-    grid.inventory.setActive(float(key)-1);
+    Game.Instance().inventory.setActive(float(key)-1);
   }
 }
 
@@ -98,7 +145,10 @@ function createCache() {
     imageCache[type] = images.blocks.get(type*blockSize,0,blockSize,images.blocks.height)    
   })
 }
-function setup() {
+
+
+
+async function setup() {
   createCache();
   rectMode(CENTER);
   imageMode(CENTER);
@@ -109,7 +159,7 @@ function setup() {
   createCanvas(config.canvas.width, config.canvas.height);
   createGUI();
   
-  grid = new Grid(images.blocks,
+  var grid = new Grid(
                  config.grid.translate.x,
                  config.grid.translate.y,
                  config.grid.rows, 
@@ -117,7 +167,11 @@ function setup() {
                  config.grid.blockSize
                 );
 
-  player = new Player(images.sprites,config.player.x,config.player.y)  
+  var player = new Player(images.sprites,config.player.x,config.player.y);
+  new Game(grid, player);
+  var map = await MapSaver.loadMap('startworld');
+  await grid.applyMap(map.encodedMap);
+
   setInterval(centerPlayerToMiddle,5);
 }
 
@@ -153,6 +207,7 @@ function draw() {
   MatterObject.draw(wireFrames);
 
   // cursor
+  var grid = Game.Instance().grid;
   if(!grid.mouseIsOnBlock()) {
     var coordinates = grid.snappedXYcoordinates();
     var snapGrid = config.grid.snap;
@@ -164,14 +219,12 @@ function draw() {
         translate(mouseX,mouseY);
       var scaling = 1/15 * config.grid.blockSize / 20;
       scale(scaling,scaling)
-      image(imageCache[grid.inventory.selected],0,0);
+      image(imageCache[Game.Instance().inventory.selected],0,0);
       pop();
     } 
   }
-//  cursor(Block.cursor);
-  player.checkMovement()
+  Game.Instance().player.checkMovement()
   if(mouseIsPressed)
     mouseDown();
-  grid.inventory.draw()
-    
+  Game.draw()
 }

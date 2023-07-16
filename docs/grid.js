@@ -2,9 +2,6 @@ class Block extends MatterObject {
   static cursor;
   constructor(grid, row, col, type) {
     super();
-    var img = grid.img;
-
-    this.img = imageCache[type]; 
     this.type = type;
     this.grid = grid;
     this.type = type;
@@ -23,11 +20,15 @@ class Block extends MatterObject {
     if(this.isVisible()&&airAbove) 
       this.addToWorld();
   }
+
+  serialize() {
+    return {row: this.row, col: this.col, type: this.type};
+  }
   
   addToWorld() {
-    // logIt("Creating body at ", this.row, this.col);
+    logIt("Creating body at ", this.row, this.col);
     if(this.body || !this.isVisible()) {
-      // logIt("... canceled - not visible or already has a body")
+      logIt("... canceled - not visible or already has a body")
       return;
     }
     var grid = this.grid;
@@ -67,19 +68,18 @@ class Block extends MatterObject {
   }
 
   neighbors() {
-    var blocks = [];
     var neighbors = [[1,0],[0,-1],[0,1],[-1,0]];
     logIt("Destroying block",this.row,this.col);
-    neighbors.map(neighbor => {
+    return neighbors.map(neighbor => {
       var row = this.row + neighbor[0];
       var col = this.col + neighbor[1];
       // corner cases: top rows/cols
-      if(row==0 || row == this.grid.grid.length) return;
-      // if(col==0 || col == this.grid.grid[0].length) return;
-      var neighborBrick = this.grid.grid[row][col];
-      blocks.push(neighborBrick);
-    });
-    return blocks;
+      if(row<0 || row == this.grid.rows) return;
+      if(col<0 || col == this.grid.cols) return;
+      return this.grid.grid[row][col];
+    })
+      // filter out empty blocks (i.e. out of grid)
+      .filter(b => b);
   }
 
   mouseDown() {
@@ -90,10 +90,11 @@ class Block extends MatterObject {
       if(!this.isDestroyed())
         return;
       // create a physical body for all neighbors
+      Game.Instance().inventory.addItem(this.type)
+      this.type = config.blockTypes.AIR;
       this.neighbors().map(brick => brick.addToWorld());
       World.remove(world,this.body);
       delete(this.body);
-      this.grid.inventory.addItem(this.type)
     }
   }
   
@@ -106,6 +107,10 @@ class Block extends MatterObject {
       scale(30,30)
       image(spriteCache[level],0,0)
     }
+  }
+
+  image() {
+    return imageCache[this.type];
   }
 
   draw(wireFrame) {
@@ -127,7 +132,7 @@ class Block extends MatterObject {
       push();
       translate(this.x,this.y);
       scale(this.grid.size/this.grid.blockSize)
-      image(this.img,0,0);
+      image(this.image(),0,0);
       this.drawDamage();
       pop();
     }
@@ -137,6 +142,30 @@ class Block extends MatterObject {
 
 //cols=collumns | size is the size of a single square
 class Grid {
+  constructor(x, y, rows, cols, size) {
+    this.x = x;
+    this.y = y;
+    var mapBlocks = 10;
+    var img = images.blocks;
+    var blockSize = img.width / mapBlocks; // 287 or 10
+    this.size = size;
+    this.blockSize = blockSize;
+    this.rows = rows;
+    this.cols = cols;
+
+    var grid = [];
+    this.grid = grid;
+
+    for (var i = 0; i < rows; i++) {
+      var row = [];
+      for (var j = 0; j < cols; j++) {
+        var blockType = this.blockType(i, j);
+        row.push(new Block(this, i, j, blockType));
+      }
+      grid.push(row);
+    }
+  }
+
   blockType(row, col) {
     col*=0.15
     var waveOne=Math.sin(col/2)
@@ -174,6 +203,48 @@ class Grid {
     return blockType;
   }
 
+  serialize() {
+    return JSON.stringify(this,(key,value) => {
+      if(key == "grid") {
+        var grid = value;
+        var serialized = [];
+        for(var i=0;i<this.rows;i++) {
+          var row = [];
+          for(var j=0;j<this.cols;j++) {
+              row.push(grid[i][j].serialize())
+          }
+          serialized.push(row);
+        }
+        return serialized;
+      }
+      return value;
+    })
+  }
+
+  printOut() {
+    this.grid.map(row => console.log(row.map(c => (c.type=="11") ? " " : c.type).join("")))
+  }
+
+  applyMap(encodedMap) {
+    var newGrid = JSON.parse(encodedMap);
+    var grid = [];
+
+    this.grid.map(row => row.map(b => b.cleanup()));
+    console.log("Cleaned up");
+    this.grid = [];
+    for(var i = 0; i < newGrid.rows; i++) {
+      var row = []
+      for(var j = 0; j < newGrid.cols; j++) {
+        var block = new Block(this, i, j, newGrid.grid[i][j].type);
+        row.push(block);
+      }
+      this.grid.push(row);
+    }
+
+    this.rows = newGrid.rows;
+    this.cols = newGrid.cols;
+  }
+
   getCoordinates() {
     var col = round(( mouseX - this.x - MatterObject._translate.x ) / config.grid.blockSize);
     var row = round(( mouseY - this.y - MatterObject._translate.y ) / config.grid.blockSize);
@@ -204,7 +275,7 @@ class Grid {
   }
 
   addItem(blockType){
-    if(!this.inventory.removeItem(blockType)) return;    
+    if(!Game.Instance().inventory.removeItem(blockType)) return;    
     var coordinates = this.getCoordinates();
     // that means we're out of the grid
     if(!coordinates)
@@ -225,37 +296,5 @@ class Grid {
       for (var i = 0; i < random() * 5; i++)
         this.grid[i+start][j].type = blockTypes.AIR;
     }
-  }
-
-  constructor(img, x, y, rows, cols, size) {
-    this.x = x;
-    this.y = y;
-    var mapBlocks = 10;
-    var blockSize = img.width / mapBlocks; // 287 or 10
-    this.size = size;
-    this.blockSize = blockSize;
-    this.img = img;
-    this.rows = rows;
-    this.cols = cols;
-
-    this.inventory = new Inventory();
-    for(var i=0;i<100;i++) {
-      var randomBlockType = floor(random() * (Object.keys(config.blockTypes).length-1)); 
-      print(randomBlockType);
-      this.inventory.addItem(randomBlockType);
-    }
-    var grid = [];
-    this.grid = grid;
-
-    for (var i = 0; i < rows; i++) {
-      var row = [];
-      for (var j = 0; j < cols; j++) {
-        var blockType = this.blockType(i, j);
-        row.push(new Block(this, i, j, blockType));
-      }
-      grid.push(row);
-    }
-
-    // this.createCavern();
   }
 }
