@@ -3,8 +3,13 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import uvicorn
 from database import Database
+from sockets import sio_app
 
 app = FastAPI()
+
+# Serve static files from the "docs" directory
+app.mount("/static", StaticFiles(directory="docs"), name="static")
+
 
 URL = 'sqlite:///backend/data/maps.db'
 db = Database(URL)
@@ -53,12 +58,10 @@ def list_maps():
 # async def root():
 #     return app.get_static_file("index.html")
 
-# Serve static files from the "docs" directory
-app.mount("/", StaticFiles(directory="docs"), name="static")
-
+app.mount('/', app=sio_app)
 
 
 # Run the server
 if __name__ == "__main__":
     port = 3000
-    uvicorn.run("server:app", reload = True, host="0.0.0.0", port=port)
+    uvicorn.run("server:app", reload = False, host="0.0.0.0", port=port)

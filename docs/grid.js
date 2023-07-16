@@ -273,7 +273,6 @@ class Grid {
     this.inventory = new Inventory();
     for(var i=0;i<100;i++) {
       var randomBlockType = floor(random() * (Object.keys(config.blockTypes).length-1)); 
-      print(randomBlockType);
       this.inventory.addItem(randomBlockType);
     }
     var grid = [];

@@ -10,7 +10,6 @@ class Inventory{
         } else{
         this.items[type]++
         }
-        print (this.items)  
     }
 
     setActive(index) {

@@ -3,3 +3,4 @@ uvicorn
 uvicorn==0.22.0
 pandas==2.0.3
 SQLAlchemy==2.0.19
+python-socketio==5.8.0

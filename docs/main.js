@@ -34,7 +34,6 @@ function mouseDown() {
 function setupWorld() {
   engine = Engine.create();
   world = engine.world;
-  print(world.gravity.y);
   world.gravity.y = config.gravity;
   
   Matter.Runner.run(engine);  
@@ -170,11 +169,9 @@ function centerPlayerToMiddle() {
 
 function scrollRight(){
   t-=slider.value();
-  print("Scrolling")
   MatterObject.translate(-slider.value(),0)
 }
 function scrollLeft(){
-  t+=slider.value();
   print("Scrolling")
   MatterObject.translate(slider.value(),0)
 }

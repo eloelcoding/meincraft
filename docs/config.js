@@ -17,7 +17,7 @@ Object.keys(blockTypes).map(k => {
 
 let config = {
     showGUI: true,
-    log: true,
+    log: false,
     gravity: 0.8,
     movement: {
       //in minecraft it takes .80 secs to fall 4 blocks
