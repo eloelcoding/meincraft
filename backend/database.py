@@ -2,8 +2,14 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.engine.base import Engine
 import pandas as pd
 from typing import Optional
+from pydantic import BaseModel
 
 VERBOSE = False
+
+# Define a model for the map data
+class Map(BaseModel):
+    encodedMap: str
+    name: str
 
 class Database:
     def __init__(self, url):
@@ -18,7 +24,7 @@ class Database:
     def __del__(self):
         if self.engine is not None:
             self.engine.dispose()
-        
+
     def query(self, query: str, params = None) -> pd.DataFrame:
         if params is None:
             params = {} 
@@ -46,7 +52,7 @@ class Database:
         create_query = "CREATE TABLE IF NOT EXISTS maps (encoded_map TEXT, name TEXT PRIMARY KEY)"
         self.execute_query(create_query)
 
-    def save_map(self, map_data) -> None:
+    def save_map(self, map_data: Map) -> None:
         query = "INSERT OR REPLACE INTO maps (encoded_map, name) VALUES (:encodedMap,:name)"
         self.execute_query(query, map_data.__dict__)
 

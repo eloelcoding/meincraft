@@ -1,8 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
 import uvicorn
-from database import Database
+from database import Database, Map
 
 app = FastAPI()
 
@@ -10,10 +9,6 @@ URL = 'sqlite:///backend/data/maps.db'
 db = Database(URL)
 db.create_table()
 
-# Define a model for the map data
-class Map(BaseModel):
-    encodedMap: str
-    name: str
 
 # Save a map to the database
 @app.post("/api/map")
