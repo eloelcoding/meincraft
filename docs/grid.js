@@ -51,9 +51,9 @@ class Block extends MatterObject {
 
   isNearPlayer(){
     var radius = 3
-    var player = Game.Instance().player;
+    var player = Game.player;
     var playerCords = player.getCoordinates()
-    var blockCords = Game.Instance().grid.getCoordinates();
+    var blockCords = Game.grid.getCoordinates();
     if (!blockCords) return false;
     var distanceRow = blockCords.row-playerCords.row
     var distanceCol = blockCords.col-playerCords.col
@@ -104,7 +104,7 @@ print(distanceRow,distanceCol)
       if(!this.isDestroyed())
         return;
       // create a physical body for all neighbors
-      Game.Instance().inventory.addItem(this.type)
+      Game.inventory.addItem(this.type)
       this.type = config.blockTypes.AIR;
       this.neighbors().map(brick => brick.addToWorld());
       World.remove(world,this.body);
@@ -289,7 +289,7 @@ class Grid {
   }
 
   addItem(blockType){
-    if(!Game.Instance().inventory.removeItem(blockType)) return;    
+    if(!Game.inventory.removeItem(blockType)) return;    
     var coordinates = this.getCoordinates();
     // that means we're out of the grid
     if(!coordinates)

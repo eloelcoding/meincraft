@@ -52,7 +52,7 @@ function saveMap(chooseName) {
     name = prompt("Name your map");
   else
     name = dropdown.value();
-  MapSaver.saveMap(name,Game.Instance().grid.serialize());
+  MapSaver.saveMap(name,Game.grid.serialize());
   refreshMapDropDown(dropdown);
 }
 
@@ -94,7 +94,7 @@ function createGUI() {
   dropdown.changed(async () => {
     var map = await MapSaver.loadMap(dropdown.value());
     console.log(map.encodedMap)
-    await Game.Instance().grid.applyMap(map.encodedMap);
+    await Game.grid.applyMap(map.encodedMap);
   });
   dropdown.position(400, 10);
   dropdown.size(100, 25);
@@ -114,7 +114,7 @@ function onChange() {
 
 function mousePressed() {
   if (mouseButton === RIGHT) {
-    var game = Game.Instance();
+    var game = Game;
     if(game.grid.mouseIsOnBlock()) return
     game.grid.addItem(game.inventory.selectedIdx)
     console.log("Right-click detected");
@@ -126,7 +126,7 @@ function keyPressed() {
     wireFrames = !wireFrames;
   }
   if (key >= '1' && key <= '9') {
-    Game.Instance().inventory.setActive(float(key)-1);
+    Game.inventory.setActive(float(key)-1);
   }
 }
 
@@ -168,7 +168,7 @@ async function setup() {
                 );
 
   var player = new Player(images.sprites,config.player.x,config.player.y);
-  new Game(grid, player);
+  Game.create(grid, player);
   var map = await MapSaver.loadMap('startworld');
   await grid.applyMap(map.encodedMap);
 
@@ -207,7 +207,7 @@ function draw() {
   MatterObject.draw(wireFrames);
 
   // cursor
-  var grid = Game.Instance().grid;
+  var grid = Game.grid;
   if(!grid.mouseIsOnBlock()) {
     var coordinates = grid.snappedXYcoordinates();
     var snapGrid = config.grid.snap;
@@ -219,11 +219,11 @@ function draw() {
         translate(mouseX,mouseY);
       var scaling = 1/15 * config.grid.blockSize / 20;
       scale(scaling,scaling)
-      image(imageCache[Game.Instance().inventory.selected],0,0);
+      image(imageCache[Game.inventory.selected],0,0);
       pop();
     } 
   }
-  Game.Instance().player.checkMovement()
+  Game.player.checkMovement()
   if(mouseIsPressed)
     mouseDown();
   Game.draw()

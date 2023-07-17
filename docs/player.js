@@ -24,7 +24,7 @@ class Player extends MatterObject {
   }
 
   getCoordinates() {
-    var grid = Game.Instance().grid 
+    var grid = Game.grid 
     let pos = this.body.position;
     var col = round(( pos.x - grid.x - MatterObject._translate.x ) / config.grid.blockSize);
     var row = round(( pos.y - grid.y - MatterObject._translate.y ) / config.grid.blockSize);
