@@ -1,5 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
+from starlette.responses import FileResponse
+
 import uvicorn
 from database import Database, Map
 
@@ -43,10 +45,10 @@ def list_maps():
     map_names = db.get_map_names()
     return {"mapNames": map_names}
 
-# Serve index.html as the default page
-# @app.get("/")
-# async def root():
-#     return app.get_static_file("index.html")
+# Serve the index.html file as the default page
+@app.get("/")
+async def get_index():
+    return FileResponse("docs/index.html")
 
 # Serve static files from the "docs" directory
 app.mount("/", StaticFiles(directory="docs"), name="static")
