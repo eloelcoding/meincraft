@@ -12,13 +12,6 @@ class Block extends MatterObject {
     var airAbove = true;
     this.health = 100;
 
-    if(row>0){
-      var blockAbove = grid.grid[row-1][col];
-      airAbove = !blockAbove.isVisible()
-    }    
-    
-    if(this.isVisible()&&airAbove) 
-      this.addToWorld();
   }
 
   serialize() {
@@ -78,6 +71,16 @@ class Block extends MatterObject {
 
   isDestroyed() {
     return this.health<=0;   
+  }
+
+  shouldBePhysical() {
+    if(!this.isVisible()) return false;
+    var physical = false;
+    this.neighbors().map(b => {
+      if(physical) return;
+      physical = !b.isVisible();
+    })
+    return physical;
   }
 
   neighbors() {
@@ -184,6 +187,19 @@ class Grid {
       }
       grid.push(row);
     }
+
+  }
+
+  addPhysicalObjects() {
+    var grid = this.grid;
+    // 2nd pass to find out if some objects are physical
+    for (var i = 0; i < this.rows; i++) {
+      var row = [];
+      for (var j = 0; j < this.cols; j++) {
+        if(grid[i][j].shouldBePhysical())
+          grid[i][j].addToWorld()
+      }
+    }
   }
 
   blockType(row, col) {
@@ -247,7 +263,6 @@ class Grid {
 
   applyMap(encodedMap) {
     var newGrid = JSON.parse(encodedMap);
-    var grid = [];
 
     this.grid.map(row => row.map(b => b.cleanup()));
     console.log("Cleaned up");
@@ -263,6 +278,7 @@ class Grid {
 
     this.rows = newGrid.rows;
     this.cols = newGrid.cols;
+    this.addPhysicalObjects();
   }
 
   getCoordinates() {
