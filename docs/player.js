@@ -40,8 +40,11 @@ class Player extends MatterObject {
   checkMovement(){
     var speed = config.movement.speed;
     var jumpAmount = config.movement.jumpAmount;
+
     var x = speed * (keyIsDown(RIGHT_ARROW) - keyIsDown(LEFT_ARROW));
+    x += speed * (keyIsDown(68) - keyIsDown(65)) // D and A
     var y = jumpAmount * (keyIsDown(DOWN_ARROW) - keyIsDown(UP_ARROW));
+    y += speed * (keyIsDown(83) - keyIsDown(87)) // S and W
     var speedUp = keyIsDown(SHIFT);
     if(speedUp) {
       x *= config.movement.shiftSpeedupFactor;
