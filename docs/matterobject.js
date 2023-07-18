@@ -12,6 +12,8 @@ class MatterObject {
 
   cleanup() {
     // console.log("Cleaning up");
+    if(this.body)
+      World.remove(world,this.body);
     var idx = MatterObject.objects.indexOf(this);
     MatterObject.objects.splice(idx,1);
   }

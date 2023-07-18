@@ -9,6 +9,15 @@ class Game {
         Game.inventory = Game.generateInventory();
     }
 
+    static async loadSettings(map) {
+        if(!map) {
+            console.log("Map is empty");
+            return;
+        }
+        await Game.grid.applyMap(map.encodedMap);
+        Game.inventory.items = map.inventory || {};
+    }
+
     static generateInventory() {
         var inventory = new Inventory();
         for (var i = 0; i < 100; i++) {
