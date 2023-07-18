@@ -176,8 +176,11 @@ async function setup() {
 
   var player = new Player(images.sprites, config.player.x, config.player.y);
   Game.create(grid, player);
-  var map = await MapSaver.loadMap(config.startingMap);
-  await Game.loadSettings(map);
+  try {
+    var map = await MapSaver.loadMap(config.startingMap);
+    await Game.loadSettings(map);
+  }
+  catch {}
 
   setInterval(centerPlayerToMiddle, 5);
 }
