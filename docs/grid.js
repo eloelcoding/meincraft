@@ -49,16 +49,16 @@ class Block extends MatterObject {
     return isInside;
   }
 
-  isNearPlayer(){
-    var radius = 3
+  isNearPlayer(radius = 3){
     var player = Game.player;
     var playerCords = player.getCoordinates()
-    var blockCords = Game.grid.getCoordinates();
-    if (!blockCords) return false;
+    // print(playerCords)
+    var blockCords = {row: this.row, col: this.col };//Game.grid.getCoordinates();
+    if (!blockCords || !playerCords) return false;
     var distanceRow = blockCords.row-playerCords.row
     var distanceCol = blockCords.col-playerCords.col
+    // print(distanceRow,distanceCol)
     if(abs(distanceRow) + abs(distanceCol) <= radius) return true;
-print(distanceRow,distanceCol)
 
   }
 
@@ -145,8 +145,14 @@ print(distanceRow,distanceCol)
       }
       push();
       translate(this.x,this.y);
-      scale(this.grid.size/this.grid.blockSize)
-      image(this.image(),0,0);
+      if(this.isNearPlayer(10)) {
+        scale(this.grid.size/this.grid.blockSize)
+        image(this.image(),0,0)
+      }
+      else {
+        fill(200);
+        rect(0,0,this.grid.size,this.grid.size);
+      }
       this.drawDamage();
       pop();
     }
@@ -271,11 +277,16 @@ class Grid {
     }
   }
 
-  mouseIsOnBlock() {
+  activeBlock() {
     var coordinates = this.getCoordinates();
     if(!coordinates)
-      return false;
-    var block = this.grid[coordinates.row][coordinates.col];
+      return;
+    return this.grid[coordinates.row][coordinates.col];
+  }
+
+  mouseIsOnBlock() {
+    var block = this.activeBlock();
+    if(!block) return false;
     return block.isVisible();
   }
 

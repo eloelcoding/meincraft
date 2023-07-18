@@ -20,8 +20,8 @@ class MatterObject {
 
   absolutePosition() {
     return { 
-      x: player.body.position.x + MatterObject._translate.x,
-      y: player.body.position.y + MatterObject._translate.y,
+      x: this.body.position.x + MatterObject._translate.x,
+      y: this.body.position.y + MatterObject._translate.y,
     } 
   }
 

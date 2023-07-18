@@ -26,8 +26,8 @@ class Player extends MatterObject {
   getCoordinates() {
     var grid = Game.grid 
     let pos = this.body.position;
-    var col = round(( pos.x - grid.x - MatterObject._translate.x ) / config.grid.blockSize);
-    var row = round(( pos.y - grid.y - MatterObject._translate.y ) / config.grid.blockSize);
+    var col = round(( pos.x - grid.x ) / config.grid.blockSize);
+    var row = round(( pos.y - grid.y ) / config.grid.blockSize);
 
     // if we are outside the grid, return nothing
     if(col < 0 || col >= grid.cols || row < 0 || row >= grid.rows)

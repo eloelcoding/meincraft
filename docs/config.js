@@ -25,7 +25,7 @@ let config = {
       speed: 5,
       shiftSpeedupFactor: 2,
     },
-    startingMap: "mini",
+    startingMap: "startworld",
     grid : {
       translate: {
         x:100,

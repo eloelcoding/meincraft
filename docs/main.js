@@ -219,15 +219,18 @@ function draw() {
     var coordinates = grid.snappedXYcoordinates();
     var snapGrid = config.grid.snap;
     if (coordinates != undefined) {
-      push()
-      if (snapGrid)
-        translate(coordinates.x, coordinates.y);
-      else
-        translate(mouseX, mouseY);
-      var scaling = 1 / 15 * config.grid.blockSize / 20;
-      scale(scaling, scaling)
-      image(imageCache[Game.inventory.selected], 0, 0);
-      pop();
+      var block = grid.activeBlock();
+      if(block.isNearPlayer()) {
+        push()
+        if (snapGrid)
+          translate(coordinates.x, coordinates.y);
+        else
+          translate(mouseX, mouseY);
+        var scaling = 1 / 15 * config.grid.blockSize / 20;
+        scale(scaling, scaling)
+        image(imageCache[Game.inventory.selected], 0, 0);
+        pop();
+      }
     }
   }
   Game.player.checkMovement()
